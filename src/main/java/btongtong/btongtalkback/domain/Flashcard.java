@@ -21,7 +21,7 @@ public class Flashcard {
     private String answer;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "flashcard")
+    @OneToMany(mappedBy = "flashcard", cascade = CascadeType.ALL)
     private List<Record> records = new ArrayList<>();
 
 }
