@@ -1,6 +1,9 @@
 package btongtong.btongtalkback.service;
 
+import btongtong.btongtalkback.domain.Member;
 import btongtong.btongtalkback.dto.*;
+import btongtong.btongtalkback.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -12,7 +15,10 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 
 @Service
-public class CustomOauth2UserService extends DefaultOAuth2UserService {
+@RequiredArgsConstructor
+public class Oauth2UserService extends DefaultOAuth2UserService {
+    private final MemberRepository memberRepository;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -24,8 +30,18 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         OauthAttributes attributes = OauthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes(), accessToken);
 
         // 멤버 create or update(토큰)
-        // jwt
+        Member member = updateOrSave(attributes);
 
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("USER")), attributes.getAttributes(), attributes.getUserNameAttributeName());
+        // 멤버 id attributes에 넣기
+        attributes.updateAttributes(member.getId());
+
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole())), attributes.getAttributes(), "id");
+    }
+
+    private Member updateOrSave(OauthAttributes attributes) {
+        Member member = memberRepository.findByEmail(attributes.getEmail())
+                .orElseGet(attributes::toEntity)
+                .updateOauthAccessToken(attributes.getAccessToken());
+        return memberRepository.save(member);
     }
 }

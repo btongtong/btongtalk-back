@@ -1,9 +1,11 @@
 package btongtong.btongtalkback.dto;
 
 import btongtong.btongtalkback.domain.Member;
+import btongtong.btongtalkback.domain.Role;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -12,54 +14,48 @@ public class OauthAttributes {
     private String userNameAttributeName;
     private String email;
     private String name;
-    private String profileImg;
 
     private String accessToken;
 
     @Builder
-    public OauthAttributes(Map<String, Object> attributes, String userNameAttributeName, String email, String name, String profileImg, String accessToken) {
+    public OauthAttributes(Map<String, Object> attributes, String userNameAttributeName, String email, String name, String accessToken) {
         this.attributes = attributes;
         this.userNameAttributeName = userNameAttributeName;
         this.email = email;
         this.name = name;
-        this.profileImg = profileImg;
         this.accessToken = accessToken;
     }
 
+    public OauthAttributes(){}
 
     public static OauthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes, String accessToken) {
         switch (registrationId) {
             case "naver":
-                return ofNaver(userNameAttributeName, attributes);
+                return ofNaver(userNameAttributeName, attributes, accessToken);
             case "kakao":
-                return ofKakao(userNameAttributeName, attributes);
+                return ofKakao(userNameAttributeName, attributes, accessToken);
         }
 
         return null;
     }
 
-    public static OauthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
-        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-
+    public static OauthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes, String accessToken) {
         return OauthAttributes.builder()
-                .email((String) response.get("email"))
-                .name((String) response.get("name"))
-                .profileImg((String) response.get("profile_image"))
-                .attributes(attributes)
+                .email((String) ((Map) attributes.get("response")).get("email"))
+                .name((String) ((Map) attributes.get("response")).get("name"))
+                .attributes(new HashMap<>(attributes))  // map 수정 가능하도록 새로 만들기 (원래는 unmodifiableMap 형태)
                 .userNameAttributeName(userNameAttributeName)
+                .accessToken(accessToken)
                 .build();
     }
 
-    public static OauthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
-        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
-
+    public static OauthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes, String accessToken) {
         return OauthAttributes.builder()
-                .email((String) kakaoAccount.get("email"))
-                .name((String) profile.get("nickname"))
-                .profileImg((String) profile.get("profile_image_url"))
-                .attributes(attributes)
+                .email((String) ((Map) attributes.get("kakao_account")).get("email"))
+                .name((String) ((Map) attributes.get("profile")).get("nickname"))
+                .attributes(new HashMap<>(attributes))
                 .userNameAttributeName(userNameAttributeName)
+                .accessToken(accessToken)
                 .build();
     }
 
@@ -67,9 +63,13 @@ public class OauthAttributes {
         return Member.builder()
                 .email(email)
                 .nickname(name)
-                .profileImg(profileImg)
+                .role(Role.USER.name())
                 .oauthAccessToken(accessToken)
                 .build();
+    }
+
+    public void updateAttributes(Long memberId) {
+        this.attributes.put("id", memberId);
     }
 
 }
