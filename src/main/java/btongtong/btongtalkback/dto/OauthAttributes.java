@@ -11,50 +11,55 @@ import java.util.Map;
 @Getter
 public class OauthAttributes {
     private Map<String, Object> attributes;
-    private String userNameAttributeName;
+    private String provider;
     private String email;
     private String name;
-
+    private String role;
     private String accessToken;
 
     @Builder
-    public OauthAttributes(Map<String, Object> attributes, String userNameAttributeName, String email, String name, String accessToken) {
+    public OauthAttributes(Map<String, Object> attributes, String provider, String email, String name, String role, String accessToken) {
         this.attributes = attributes;
-        this.userNameAttributeName = userNameAttributeName;
+        this.provider = provider;
         this.email = email;
         this.name = name;
+        this.role = role;
         this.accessToken = accessToken;
     }
 
-    public OauthAttributes(){}
-
-    public static OauthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes, String accessToken) {
+    public static OauthAttributes of(String registrationId, Map<String, Object> attributes, String accessToken) {
         switch (registrationId) {
             case "naver":
-                return ofNaver(userNameAttributeName, attributes, accessToken);
+                return ofNaver(registrationId, attributes, accessToken);
             case "kakao":
-                return ofKakao(userNameAttributeName, attributes, accessToken);
+                return ofKakao(registrationId, attributes, accessToken);
         }
 
         return null;
     }
 
-    public static OauthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes, String accessToken) {
+    public static OauthAttributes ofNaver(String provider, Map<String, Object> attributes, String accessToken) {
+        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
         return OauthAttributes.builder()
-                .email((String) ((Map) attributes.get("response")).get("email"))
-                .name((String) ((Map) attributes.get("response")).get("name"))
                 .attributes(new HashMap<>(attributes))  // map 수정 가능하도록 새로 만들기 (원래는 unmodifiableMap 형태)
-                .userNameAttributeName(userNameAttributeName)
+                .provider(provider)
+                .email((String) response.get("email"))
+                .name((String) response.get("name"))
+                .role(Role.USER.name())
                 .accessToken(accessToken)
                 .build();
     }
 
-    public static OauthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes, String accessToken) {
+    public static OauthAttributes ofKakao(String provider, Map<String, Object> attributes, String accessToken) {
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+
         return OauthAttributes.builder()
-                .email((String) ((Map) attributes.get("kakao_account")).get("email"))
-                .name((String) ((Map) attributes.get("profile")).get("nickname"))
                 .attributes(new HashMap<>(attributes))
-                .userNameAttributeName(userNameAttributeName)
+                .provider(provider)
+                .email((String) kakaoAccount.get("email"))
+                .name((String) profile.get("nickname"))
+                .role(Role.USER.name())
                 .accessToken(accessToken)
                 .build();
     }
@@ -64,6 +69,7 @@ public class OauthAttributes {
                 .email(email)
                 .nickname(name)
                 .role(Role.USER.name())
+                .provider(provider)
                 .oauthAccessToken(accessToken)
                 .build();
     }

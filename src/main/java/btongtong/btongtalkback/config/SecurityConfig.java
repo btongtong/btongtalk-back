@@ -3,6 +3,7 @@ package btongtong.btongtalkback.config;
 import btongtong.btongtalkback.handler.Oauth2SuccessHandler;
 import btongtong.btongtalkback.jwt.JwtFilter;
 import btongtong.btongtalkback.jwt.JwtUtil;
+import btongtong.btongtalkback.service.CustomOauth2AuthorizedClientService;
 import btongtong.btongtalkback.service.Oauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
@@ -24,24 +25,29 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
         String accessToken = userRequest.getAccessToken().getTokenValue();
 
-        OauthAttributes attributes = OauthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes(), accessToken);
+        OauthAttributes attributes = OauthAttributes.of(registrationId, oAuth2User.getAttributes(), accessToken);
 
         // 멤버 create or update(토큰)
-        Member member = updateOrSave(attributes);
+        Long memberId = updateOrSave(attributes);
 
         // 멤버 id attributes에 넣기
-        attributes.updateAttributes(member.getId());
+        attributes.updateAttributes(memberId);
 
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole())), attributes.getAttributes(), "id");
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(attributes.getRole())), attributes.getAttributes(), "id");
     }
 
-    private Member updateOrSave(OauthAttributes attributes) {
-        Member member = memberRepository.findByEmail(attributes.getEmail())
-                .orElseGet(attributes::toEntity)
-                .updateOauthAccessToken(attributes.getAccessToken());
-        return memberRepository.save(member);
+    @Transactional
+    public Long updateOrSave(OauthAttributes attributes) {
+        Member member = memberRepository.findByEmail(attributes.getEmail());
+
+        if(member == null) {
+            member = memberRepository.save(attributes.toEntity());
+        }
+
+        member.updateOauthAccessToken(attributes.getAccessToken());
+
+        return member.getId();
     }
 }
