@@ -11,6 +11,7 @@ import java.util.Map;
 @Getter
 public class OauthAttributes {
     private Map<String, Object> attributes;
+    private String oauthKey;
     private String provider;
     private String email;
     private String name;
@@ -18,8 +19,9 @@ public class OauthAttributes {
     private String accessToken;
 
     @Builder
-    public OauthAttributes(Map<String, Object> attributes, String provider, String email, String name, String role, String accessToken) {
+    public OauthAttributes(Map<String, Object> attributes, String oauthKey, String provider, String email, String name, String role, String accessToken) {
         this.attributes = attributes;
+        this.oauthKey = oauthKey;
         this.provider = provider;
         this.email = email;
         this.name = name;
@@ -40,8 +42,10 @@ public class OauthAttributes {
 
     public static OauthAttributes ofNaver(String provider, Map<String, Object> attributes, String accessToken) {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+
         return OauthAttributes.builder()
                 .attributes(new HashMap<>(attributes))  // map 수정 가능하도록 새로 만들기 (원래는 unmodifiableMap 형태)
+                .oauthKey((String) response.get("id"))
                 .provider(provider)
                 .email((String) response.get("email"))
                 .name((String) response.get("name"))
@@ -56,6 +60,7 @@ public class OauthAttributes {
 
         return OauthAttributes.builder()
                 .attributes(new HashMap<>(attributes))
+                .oauthKey(attributes.get("id").toString())
                 .provider(provider)
                 .email((String) kakaoAccount.get("email"))
                 .name((String) profile.get("nickname"))
@@ -69,6 +74,7 @@ public class OauthAttributes {
                 .email(email)
                 .nickname(name)
                 .role(Role.USER.name())
+                .oauthKey(oauthKey)
                 .provider(provider)
                 .oauthAccessToken(accessToken)
                 .build();

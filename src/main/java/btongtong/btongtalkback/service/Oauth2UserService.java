@@ -40,7 +40,7 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
 
     @Transactional
     public Long updateOrSave(OauthAttributes attributes) {
-        Member member = memberRepository.findByEmail(attributes.getEmail());
+        Member member = memberRepository.findByOauthKeyAndProvider(attributes.getOauthKey(), attributes.getProvider());
 
         if(member == null) {
             member = memberRepository.save(attributes.toEntity());
