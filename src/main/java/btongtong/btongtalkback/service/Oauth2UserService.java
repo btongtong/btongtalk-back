@@ -35,7 +35,7 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         // 멤버 id attributes에 넣기
         attributes.updateAttributes(memberId);
 
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(attributes.getRole())), attributes.getAttributes(), "id");
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(attributes.getRole().name())), attributes.getAttributes(), "id");
     }
 
     @Transactional

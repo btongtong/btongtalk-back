@@ -15,11 +15,11 @@ public class OauthAttributes {
     private String provider;
     private String email;
     private String name;
-    private String role;
+    private Role role;
     private String accessToken;
 
     @Builder
-    public OauthAttributes(Map<String, Object> attributes, String oauthKey, String provider, String email, String name, String role, String accessToken) {
+    public OauthAttributes(Map<String, Object> attributes, String oauthKey, String provider, String email, String name, Role role, String accessToken) {
         this.attributes = attributes;
         this.oauthKey = oauthKey;
         this.provider = provider;
@@ -49,7 +49,7 @@ public class OauthAttributes {
                 .provider(provider)
                 .email((String) response.get("email"))
                 .name((String) response.get("name"))
-                .role(Role.USER.name())
+                .role(Role.USER)
                 .accessToken(accessToken)
                 .build();
     }
@@ -64,7 +64,7 @@ public class OauthAttributes {
                 .provider(provider)
                 .email((String) kakaoAccount.get("email"))
                 .name((String) profile.get("nickname"))
-                .role(Role.USER.name())
+                .role(Role.USER)
                 .accessToken(accessToken)
                 .build();
     }
@@ -73,7 +73,7 @@ public class OauthAttributes {
         return Member.builder()
                 .email(email)
                 .nickname(name)
-                .role(Role.USER.name())
+                .role(role)
                 .oauthKey(oauthKey)
                 .provider(provider)
                 .oauthAccessToken(accessToken)

@@ -1,9 +1,9 @@
 package btongtong.btongtalkback.jwt;
 
 import btongtong.btongtalkback.dto.MemberDto;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
 
 @RequiredArgsConstructor
@@ -23,39 +24,38 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorization = null;
-        Cookie[] cookies = request.getCookies();
+        String accessToken = request.getHeader("Authorization");
 
-        for(Cookie cookie : cookies) {
-            if(cookie.getName().equals("Authorization")) {
-                authorization = cookie.getValue();
-            }
-        }
-
-        if(authorization == null) {
-            // 예외
+        if(accessToken == null) {
+            request.setAttribute("exception", "access token is null");
             filterChain.doFilter(request, response);
-
             return;
         }
 
-        String token = authorization;
-
-        if(jwtUtil.isExpired(token)) {
-            // 예외
-            filterChain.doFilter(request, response);
-
+        // token valid
+        if(!jwtUtil.isValid(accessToken)) {
+            request.setAttribute("exception", "Token is not valid.");
             return;
         }
 
-        String id = jwtUtil.getId(token);
-        String role = jwtUtil.getRole(token);
+        // token type
+        if(!jwtUtil.getType(accessToken).equals("access")) {
+            request.setAttribute("exception", "token type is not valid");
+            return;
+        }
 
-        MemberDto memberDto = new MemberDto(Long.parseLong(id), role);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(memberDto, null, Collections.singleton(new SimpleGrantedAuthority(role)));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
+        authenticateUser(accessToken);
         filterChain.doFilter(request, response);
+    }
+
+    private void authenticateUser(String accessToken) {
+        String id = jwtUtil.getId(accessToken);
+        String role = jwtUtil.getRole(accessToken);
+        setAuthentication(new MemberDto(Long.parseLong(id), role));
+    }
+
+    private void setAuthentication(MemberDto memberDto) {
+        Authentication authToken = new UsernamePasswordAuthenticationToken(memberDto, null, Collections.singleton(new SimpleGrantedAuthority(memberDto.getRole())));
+        SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 }

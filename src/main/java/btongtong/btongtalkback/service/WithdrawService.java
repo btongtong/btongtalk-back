@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class WithdrawService {
@@ -21,9 +19,9 @@ public class WithdrawService {
     private final MemberRepository memberRepository;
 
     @Value("${spring.naver.unlink.url}")
-    private String NAVER_UNLINK_URL;
+    private String naverUnlinkUrl;
     @Value("${spring.kakao.unlink.url}")
-    private String KAKAO_UNLINK_URL;
+    private String kakaoUnlinkUrl;
     @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String naverClientId;
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
@@ -47,27 +45,21 @@ public class WithdrawService {
         return "ok";
     }
 
-    public String naverUnlink(String accessToken) {
+    public void naverUnlink(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        String requestBody = "grant_type=delete&client_id=" + naverClientId + "&client_secret=" + naverClientSecret + "&access_token=" + accessToken + "&service_provider=NAVER";
 
-        String requestBody = "grant_type=delete&client_id="+naverClientId+"&client_secret="+naverClientSecret+"&access_token=" + accessToken + "&service_provider=NAVER";
-
-        HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(NAVER_UNLINK_URL, request, String.class);
-        System.out.println(response.getBody().toString());
-        return "ok";
+        ResponseEntity<String> response = restTemplate.postForEntity(naverUnlinkUrl, new HttpEntity<String>(requestBody, headers), String.class);
     }
 
-    public String kakaoUnlink(String accessToken) {
+    public void kakaoUnlink(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
 
-        HttpEntity<String> request = new HttpEntity<>(null, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(KAKAO_UNLINK_URL, request, String.class);
-        return "ok";
+        ResponseEntity<String> response = restTemplate.postForEntity(kakaoUnlinkUrl, new HttpEntity<String>(null, headers), String.class);
     }
 
 }

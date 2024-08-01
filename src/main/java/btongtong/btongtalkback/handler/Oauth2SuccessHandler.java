@@ -1,6 +1,11 @@
 package btongtong.btongtalkback.handler;
 
+import btongtong.btongtalkback.domain.Member;
+import btongtong.btongtalkback.dto.MemberDto;
 import btongtong.btongtalkback.jwt.JwtUtil;
+import btongtong.btongtalkback.repository.MemberRepository;
+import btongtong.btongtalkback.service.MemberService;
+import btongtong.btongtalkback.service.TokenService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -20,30 +26,19 @@ import java.util.Iterator;
 @RequiredArgsConstructor
 public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
+    private final MemberService memberService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
+        String id = ((DefaultOAuth2User) authentication.getPrincipal()).getName();
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
 
-        String id = oAuth2User.getName();
+        String refreshToken = jwtUtil.createJwt("refresh", id, role, 60*60*1000L);
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
+        memberService.updateRefreshToken(id, refreshToken);
 
-        String token = jwtUtil.createJwt(id, role, 60*60*60*1000L);
+        response.addCookie(jwtUtil.createCookie("Authorization", refreshToken, 60*60*24));
 
-        response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:3000/");
-    }
-
-    private Cookie createCookie(String authorization, String token) {
-        Cookie cookie = new Cookie(authorization, token);
-        cookie.setMaxAge(60*60*60*1000);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
+        response.sendRedirect("http://localhost:3000/oauth");
     }
 }

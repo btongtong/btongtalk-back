@@ -1,5 +1,8 @@
 package btongtong.btongtalkback.config;
 
+import btongtong.btongtalkback.domain.Role;
+import btongtong.btongtalkback.handler.CustomAccessDeniedHandler;
+import btongtong.btongtalkback.handler.CustomAuthenticationHandler;
 import btongtong.btongtalkback.handler.Oauth2SuccessHandler;
 import btongtong.btongtalkback.jwt.JwtFilter;
 import btongtong.btongtalkback.jwt.JwtUtil;
@@ -32,16 +35,19 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(oauth2UserService))
                         .successHandler(oauth2SuccessHandler))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/my").hasRole("USER")
+                        .requestMatchers("/", "/reissue").permitAll()
                         .anyRequest().authenticated())
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new CustomAuthenticationHandler())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())
+                );
 
         return http.build();
     }

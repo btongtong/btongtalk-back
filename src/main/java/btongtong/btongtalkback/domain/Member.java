@@ -25,15 +25,19 @@ public class Member {
     private String profileImg;
     private String oauthKey;
     private String provider;
-    private String role;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     private String oauthAccessToken;
+    private String refreshToken;
 
     @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Record> records = new ArrayList<>();
 
     @Builder
-    public Member(String email, String nickname, String provider, String oauthKey, String role, String oauthAccessToken) {
+    public Member(String email, String nickname, String provider, String oauthKey, Role role, String oauthAccessToken) {
         this.email = email;
         this.nickname = nickname;
         this.oauthKey = oauthKey;
@@ -46,4 +50,7 @@ public class Member {
         this.oauthAccessToken = oauthAccessToken;
     }
 
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
