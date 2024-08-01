@@ -1,10 +1,9 @@
 package btongtong.btongtalkback.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -34,7 +33,7 @@ public class JwtUtil {
 
     public Boolean isValid(String token) {
         try {
-            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().after(new Date());
         } catch (Exception e) {
             return false;
         }
@@ -57,6 +56,15 @@ public class JwtUtil {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 
+        return cookie;
+    }
+
+    public ResponseCookie createResponseCookie(String name, String value, int expiredS) {
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(expiredS)
+                .build();
         return cookie;
     }
 }

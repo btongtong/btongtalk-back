@@ -1,7 +1,6 @@
 package btongtong.btongtalkback.jwt;
 
 import btongtong.btongtalkback.dto.MemberDto;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collections;
 
 @RequiredArgsConstructor
@@ -35,12 +33,14 @@ public class JwtFilter extends OncePerRequestFilter {
         // token valid
         if(!jwtUtil.isValid(accessToken)) {
             request.setAttribute("exception", "Token is not valid.");
+            filterChain.doFilter(request, response);
             return;
         }
 
         // token type
         if(!jwtUtil.getType(accessToken).equals("access")) {
             request.setAttribute("exception", "token type is not valid");
+            filterChain.doFilter(request, response);
             return;
         }
 

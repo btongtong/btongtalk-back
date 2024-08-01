@@ -1,13 +1,11 @@
 package btongtong.btongtalkback.service;
 
 import btongtong.btongtalkback.domain.Member;
+import btongtong.btongtalkback.jwt.JwtUtil;
 import btongtong.btongtalkback.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -15,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class WithdrawService {
-
     private final MemberRepository memberRepository;
 
     @Value("${spring.naver.unlink.url}")
@@ -28,7 +25,7 @@ public class WithdrawService {
     private String naverClientSecret;
 
     @Transactional
-    public String withdraw(Long memberId) {
+    public ResponseEntity withdraw(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
 
         String accessToken = member.getOauthAccessToken();
@@ -42,7 +39,7 @@ public class WithdrawService {
 
         memberRepository.delete(member);
 
-        return "ok";
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     public void naverUnlink(String accessToken) {

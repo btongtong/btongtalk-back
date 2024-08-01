@@ -33,12 +33,7 @@ public class TokenService {
 
         String newAccess = jwtUtil.createJwt("access", id, role, 60*60*1000L);
         String newRefresh = jwtUtil.createJwt("refresh", id, role, 60*60*24*1000L);
-
-        ResponseCookie cookie = ResponseCookie.from("Authorization", newRefresh)
-                .httpOnly(true)
-                .path("/")
-                .maxAge(60 * 60 * 24)
-                .build();
+        ResponseCookie cookie = jwtUtil.createResponseCookie("Authorization", newRefresh, 60*60*24);
 
         memberService.updateRefreshToken(id, newRefresh);
 
