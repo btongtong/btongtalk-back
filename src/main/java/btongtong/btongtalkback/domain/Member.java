@@ -36,16 +36,20 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Record> records = new ArrayList<>();
 
+    // 생성자
     @Builder
-    public Member(String email, String nickname, String provider, String oauthKey, Role role, String oauthAccessToken) {
+    public Member(String email, String nickname, String profileImg, String oauthKey, String provider, Role role, String oauthAccessToken, String refreshToken) {
         this.email = email;
         this.nickname = nickname;
+        this.profileImg = profileImg;
         this.oauthKey = oauthKey;
         this.provider = provider;
         this.role = role;
         this.oauthAccessToken = oauthAccessToken;
+        this.refreshToken = refreshToken;
     }
 
+    // 토큰 업데이트
     public void updateOauthAccessToken(String oauthAccessToken) {
         this.oauthAccessToken = oauthAccessToken;
     }

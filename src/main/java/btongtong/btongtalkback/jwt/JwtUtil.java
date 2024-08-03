@@ -50,6 +50,14 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String createAccessToken(String id, String role) {
+        return createJwt("access", id, role, 60*60*1000L);
+    }
+
+    public String createRefreshToken(String id, String role) {
+        return createJwt("refresh", id, role, 60*60*24*1000L);
+    }
+
     public Cookie createCookie(String name, String value, int expiredS) {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(expiredS);

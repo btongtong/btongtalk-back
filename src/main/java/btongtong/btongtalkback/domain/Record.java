@@ -2,8 +2,10 @@ package btongtong.btongtalkback.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -27,4 +29,19 @@ public class Record {
     private RecordStatus status;
 
     private LocalDateTime recordDate;
+
+    @Builder
+    public Record(Member member, Flashcard flashcard, RecordStatus status) {
+        this.member = member;
+        this.flashcard = flashcard;
+        this.status = status;
+        this.recordDate = LocalDateTime.now();
+
+        if(member != null) {
+            member.getRecords().add(this);
+        }
+        if(flashcard != null) {
+            flashcard.getRecords().add(this);
+        }
+    }
 }

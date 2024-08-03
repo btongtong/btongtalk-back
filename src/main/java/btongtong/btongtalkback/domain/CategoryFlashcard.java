@@ -21,5 +21,13 @@ public class CategoryFlashcard {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    public CategoryFlashcard(Flashcard flashcard, Category category) {
+        this.flashcard = flashcard;
+        this.category = category;
+
+        flashcard.getCategoryFlashcards().add(this);
+        category.getCategoryFlashcards().add(this);
+    }
 }
 

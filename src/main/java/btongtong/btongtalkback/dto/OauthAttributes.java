@@ -16,31 +16,29 @@ public class OauthAttributes {
     private String email;
     private String name;
     private Role role;
-    private String accessToken;
 
     @Builder
-    public OauthAttributes(Map<String, Object> attributes, String oauthKey, String provider, String email, String name, Role role, String accessToken) {
+    public OauthAttributes(Map<String, Object> attributes, String oauthKey, String provider, String email, String name, Role role) {
         this.attributes = attributes;
         this.oauthKey = oauthKey;
         this.provider = provider;
         this.email = email;
         this.name = name;
         this.role = role;
-        this.accessToken = accessToken;
     }
 
-    public static OauthAttributes of(String registrationId, Map<String, Object> attributes, String accessToken) {
+    public static OauthAttributes of(String registrationId, Map<String, Object> attributes) {
         switch (registrationId) {
             case "naver":
-                return ofNaver(registrationId, attributes, accessToken);
+                return ofNaver(registrationId, attributes);
             case "kakao":
-                return ofKakao(registrationId, attributes, accessToken);
+                return ofKakao(registrationId, attributes);
         }
 
         return null;
     }
 
-    public static OauthAttributes ofNaver(String provider, Map<String, Object> attributes, String accessToken) {
+    public static OauthAttributes ofNaver(String provider, Map<String, Object> attributes) {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
         return OauthAttributes.builder()
@@ -50,11 +48,10 @@ public class OauthAttributes {
                 .email((String) response.get("email"))
                 .name((String) response.get("name"))
                 .role(Role.USER)
-                .accessToken(accessToken)
                 .build();
     }
 
-    public static OauthAttributes ofKakao(String provider, Map<String, Object> attributes, String accessToken) {
+    public static OauthAttributes ofKakao(String provider, Map<String, Object> attributes) {
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
 
@@ -65,7 +62,6 @@ public class OauthAttributes {
                 .email((String) kakaoAccount.get("email"))
                 .name((String) profile.get("nickname"))
                 .role(Role.USER)
-                .accessToken(accessToken)
                 .build();
     }
 
@@ -76,12 +72,11 @@ public class OauthAttributes {
                 .role(role)
                 .oauthKey(oauthKey)
                 .provider(provider)
-                .oauthAccessToken(accessToken)
                 .build();
     }
 
-    public void updateAttributes(Long memberId) {
-        this.attributes.put("id", memberId);
+    public void updateAttributes(String key, String value) {
+        this.attributes.put(key, value);
     }
 
 }
