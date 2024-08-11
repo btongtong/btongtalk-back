@@ -21,7 +21,6 @@ public class Member {
     private Long id;
 
     private String email;
-    private String nickname;
     private String profileImg;
     private String oauthKey;
     private String provider;
@@ -38,9 +37,8 @@ public class Member {
 
     // 생성자
     @Builder
-    public Member(String email, String nickname, String profileImg, String oauthKey, String provider, Role role, String oauthAccessToken, String refreshToken) {
+    public Member(String email, String profileImg, String oauthKey, String provider, Role role, String oauthAccessToken, String refreshToken) {
         this.email = email;
-        this.nickname = nickname;
         this.profileImg = profileImg;
         this.oauthKey = oauthKey;
         this.provider = provider;

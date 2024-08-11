@@ -1,16 +1,14 @@
 package btongtong.btongtalkback.controller;
 
 import btongtong.btongtalkback.dto.MemberDto;
+import btongtong.btongtalkback.service.CategoryService;
 import btongtong.btongtalkback.service.MemberService;
 import btongtong.btongtalkback.service.TokenService;
 import btongtong.btongtalkback.service.WithdrawService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +17,7 @@ public class TestController {
     private final TokenService tokenService;
     private final WithdrawService withdrawService;
     private final MemberService memberService;
+    private final CategoryService categoryService;
 
     @GetMapping("/withdraw")
     public ResponseEntity<?> withdraw(@AuthenticationPrincipal MemberDto memberDto) {
@@ -38,5 +37,10 @@ public class TestController {
     @PostMapping("/reissue")
     public ResponseEntity<?> resissue(@CookieValue("Authorization") String refresh) {
         return tokenService.reissue(refresh);
+    }
+
+    @GetMapping("/categories/{depth}")
+    public ResponseEntity<?> categories(@PathVariable("depth") int depth) {
+        return categoryService.findCategories(depth);
     }
 }

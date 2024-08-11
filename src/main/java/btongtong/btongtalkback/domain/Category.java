@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
     @Id @GeneratedValue
-    @Column(name = "id")
+    @Column(name = "category_id")
     private Long id;
 
     private String name;
@@ -29,18 +29,17 @@ public class Category {
     private List<Category> children = new ArrayList<>();
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<CategoryFlashcard> categoryFlashcards = new ArrayList<>();
+    private List<Flashcard> flashcards = new ArrayList<>();
 
     @Builder
     public Category(String name, Category parent) {
         this.name = name;
+        this.parent = parent;
 
         if(parent != null) {
-            this.parent = parent;
             this.depth = parent.depth+1;
             parent.getChildren().add(this);
         } else {
-            this.parent = null;
             this.depth = 0;
         }
     }

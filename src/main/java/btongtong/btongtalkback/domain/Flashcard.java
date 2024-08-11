@@ -17,6 +17,10 @@ public class Flashcard {
     @Column(name = "flashcard_id")
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     private String question;
     private String answer;
 
@@ -24,12 +28,13 @@ public class Flashcard {
     @OneToMany(mappedBy = "flashcard", cascade = CascadeType.ALL)
     private List<Record> records = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "flashcard", cascade = CascadeType.ALL)
-    private List<CategoryFlashcard> categoryFlashcards = new ArrayList<>();
-
-    public Flashcard(String question, String answer) {
+    public Flashcard(Category category, String question, String answer) {
+        this.category = category;
         this.question = question;
         this.answer = answer;
+
+        if(category != null) {
+            category.getFlashcards().add(this);
+        }
     }
 }
