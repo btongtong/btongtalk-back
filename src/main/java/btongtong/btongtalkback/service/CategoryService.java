@@ -14,8 +14,13 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public ResponseEntity findCategories(int depth) {
-        List<CategoryDto> categories = categoryRepository.findCategoriesByDepth(depth);
+    public ResponseEntity findRootCategories() {
+        List<CategoryDto> rootCategories =  categoryRepository.findRootCategories(1);
+        return ResponseEntity.status(HttpStatus.OK).body(rootCategories);
+    }
+
+    public ResponseEntity findCategories(int categoryId) {
+        List<CategoryDto> categories = categoryRepository.findCategories(categoryId);
         return ResponseEntity.status(HttpStatus.OK).body(categories);
     }
 }

@@ -4,14 +4,26 @@ import btongtong.btongtalkback.domain.Category;
 import btongtong.btongtalkback.dto.CategoryDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    @Query("SELECT new btongtong.btongtalkback.dto.CategoryDto(c.id, c.name, COUNT(cf)) " +
+    @Query(value =
+            "SELECT new btongtong.btongtalkback.dto.CategoryDto(p.id, p.name, COUNT(f.id)) " +
+            "FROM Category p " +
+            "LEFT JOIN p.children c " +
+            "LEFT JOIN c.flashcards f " +
+            "WHERE p.depth = :depth " +
+            "GROUP BY p.id, p.name")
+    List<CategoryDto> findRootCategories(@Param("depth") int depth);
+
+    @Query(value =
+            "SELECT new btongtong.btongtalkback.dto.CategoryDto(c.id, c.name, COUNT(f.id)) " +
             "FROM Category c " +
-            "LEFT JOIN c.categoryFlashcards cf " +
-            "WHERE c.depth = :depth " +
+            "LEFT JOIN c.flashcards f " +
+            "WHERE c.parent.id = :parentId " +
             "GROUP BY c.id, c.name")
-    List<CategoryDto> findCategoriesByDepth (int depth);
+    List<CategoryDto> findCategories(@Param("parentId") int parentId);
+
 }

@@ -4,12 +4,12 @@ import lombok.Getter;
 
 @Getter
 public class CategoryDto {
-    private Long categoryId;
+    private Long id;
     private String name;
     private Long count;
 
-    public CategoryDto(Long categoryId, String name, Long count) {
-        this.categoryId = categoryId;
+    public CategoryDto(Long id, String name, Long count) {
+        this.id = id;
         this.name = name;
         this.count = count;
     }

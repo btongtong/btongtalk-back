@@ -39,8 +39,13 @@ public class TestController {
         return tokenService.reissue(refresh);
     }
 
-    @GetMapping("/categories/{depth}")
-    public ResponseEntity<?> categories(@PathVariable("depth") int depth) {
-        return categoryService.findCategories(depth);
+    @GetMapping("/categories")
+    public ResponseEntity<?> rootCategories() {
+        return categoryService.findRootCategories();
+    }
+
+    @GetMapping("/categories/{categoryId}")
+    public ResponseEntity<?> categories(@PathVariable("categoryId") int categoryId) {
+        return categoryService.findCategories(categoryId);
     }
 }
