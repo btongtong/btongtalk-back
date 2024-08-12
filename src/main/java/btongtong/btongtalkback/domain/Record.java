@@ -43,4 +43,9 @@ public class Record {
             flashcard.getRecords().add(this);
         }
     }
+
+    public void updateStatus(RecordStatus status) {
+        this.status = status;
+        this.recordDate = LocalDateTime.now();
+    }
 }

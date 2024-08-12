@@ -24,6 +24,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "LEFT JOIN c.flashcards f " +
             "WHERE c.parent.id = :parentId " +
             "GROUP BY c.id, c.name")
-    List<CategoryDto> findCategories(@Param("parentId") int parentId);
+    List<CategoryDto> findCategories(@Param("parentId") Long parentId);
 
 }

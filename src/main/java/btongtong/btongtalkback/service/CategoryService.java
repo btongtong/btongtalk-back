@@ -19,7 +19,7 @@ public class CategoryService {
         return ResponseEntity.status(HttpStatus.OK).body(rootCategories);
     }
 
-    public ResponseEntity findCategories(int categoryId) {
+    public ResponseEntity findCategories(Long categoryId) {
         List<CategoryDto> categories = categoryRepository.findCategories(categoryId);
         return ResponseEntity.status(HttpStatus.OK).body(categories);
     }
