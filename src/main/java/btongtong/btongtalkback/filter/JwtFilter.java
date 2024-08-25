@@ -1,6 +1,7 @@
-package btongtong.btongtalkback.jwt;
+package btongtong.btongtalkback.filter;
 
-import btongtong.btongtalkback.dto.MemberDto;
+import btongtong.btongtalkback.dto.auth.AuthDto;
+import btongtong.btongtalkback.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,10 +52,10 @@ public class JwtFilter extends OncePerRequestFilter {
     private void authenticateUser(String accessToken) {
         String id = jwtUtil.getId(accessToken);
         String role = jwtUtil.getRole(accessToken);
-        setAuthentication(new MemberDto(Long.parseLong(id), role));
+        setAuthentication(new AuthDto(Long.parseLong(id), role));
     }
 
-    private void setAuthentication(MemberDto memberDto) {
+    private void setAuthentication(AuthDto memberDto) {
         Authentication authToken = new UsernamePasswordAuthenticationToken(memberDto, null, Collections.singleton(new SimpleGrantedAuthority(memberDto.getRole())));
         SecurityContextHolder.getContext().setAuthentication(authToken);
     }

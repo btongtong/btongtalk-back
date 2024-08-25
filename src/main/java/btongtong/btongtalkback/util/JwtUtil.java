@@ -1,8 +1,9 @@
-package btongtong.btongtalkback.jwt;
+package btongtong.btongtalkback.util;
 
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,11 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     private final SecretKey secretKey;
+    public final Long accessExpireMSecond = 60*60*1000L;
+    public final Long refreshExpireMSecond = 24*60*60*1000L;
+    public final int accessExpireSecond = 60*60;
+    public final int refreshExpireSecond = 24*60*60;
+    public final int expiredTokenSecond = 0;
 
     public JwtUtil(@Value("${spring.jwt.secret}")String secretKey) {
         this.secretKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
@@ -51,11 +57,11 @@ public class JwtUtil {
     }
 
     public String createAccessToken(String id, String role) {
-        return createJwt("access", id, role, 60*60*1000L);
+        return createJwt("access", id, role, accessExpireMSecond);
     }
 
     public String createRefreshToken(String id, String role) {
-        return createJwt("refresh", id, role, 60*60*24*1000L);
+        return createJwt("refresh", id, role, refreshExpireMSecond);
     }
 
     public Cookie createCookie(String name, String value, int expiredS) {
@@ -74,5 +80,9 @@ public class JwtUtil {
                 .maxAge(expiredS)
                 .build();
         return cookie;
+    }
+
+    public ResponseCookie createExpiredCookie() {
+        return createResponseCookie(HttpHeaders.AUTHORIZATION, null, expiredTokenSecond);
     }
 }

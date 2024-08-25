@@ -1,4 +1,4 @@
-package btongtong.btongtalkback.domain;
+package btongtong.btongtalkback.constant;
 
 public enum RecordStatus {
     KNOWN,

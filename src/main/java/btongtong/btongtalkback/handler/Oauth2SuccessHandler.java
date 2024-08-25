@@ -1,6 +1,6 @@
 package btongtong.btongtalkback.handler;
 
-import btongtong.btongtalkback.jwt.JwtUtil;
+import btongtong.btongtalkback.util.JwtUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         String refreshToken = (String) ((DefaultOAuth2User) authentication.getPrincipal()).getAttributes().get("refresh");
-        response.addCookie(jwtUtil.createCookie("Authorization", refreshToken, 60*60*24));
+        response.addCookie(jwtUtil.createCookie("Authorization", refreshToken, jwtUtil.refreshExpireSecond));
 
         response.sendRedirect("http://localhost:3000/oauth");
     }

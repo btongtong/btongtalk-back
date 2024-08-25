@@ -1,5 +1,6 @@
 package btongtong.btongtalkback.domain;
 
+import btongtong.btongtalkback.constant.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
@@ -56,5 +57,11 @@ public class Member {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void updateProfile(Member member) {
+        this.email = member.email;
+        this.name = member.name;
+        this.profileImg = member.profileImg;
     }
 }

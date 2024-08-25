@@ -1,5 +1,6 @@
 package btongtong.btongtalkback.domain;
 
+import btongtong.btongtalkback.constant.RecordStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,14 +28,16 @@ public class Record {
     @Enumerated(EnumType.STRING)
     private RecordStatus status;
 
+    private Boolean progress;
     private LocalDateTime recordDate;
 
     @Builder
-    public Record(Member member, Flashcard flashcard, RecordStatus status) {
+    public Record(Member member, Flashcard flashcard, RecordStatus status, Boolean progress) {
         this.member = member;
         this.flashcard = flashcard;
         this.status = status;
         this.recordDate = LocalDateTime.now();
+        this.progress = progress;
 
         if(member != null) {
             member.getRecords().add(this);
@@ -48,4 +51,5 @@ public class Record {
         this.status = status;
         this.recordDate = LocalDateTime.now();
     }
+
 }

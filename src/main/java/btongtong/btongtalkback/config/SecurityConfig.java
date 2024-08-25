@@ -3,8 +3,8 @@ package btongtong.btongtalkback.config;
 import btongtong.btongtalkback.handler.CustomAccessDeniedHandler;
 import btongtong.btongtalkback.handler.CustomAuthenticationHandler;
 import btongtong.btongtalkback.handler.Oauth2SuccessHandler;
-import btongtong.btongtalkback.jwt.JwtFilter;
-import btongtong.btongtalkback.jwt.JwtUtil;
+import btongtong.btongtalkback.filter.JwtFilter;
+import btongtong.btongtalkback.util.JwtUtil;
 import btongtong.btongtalkback.service.Oauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -33,8 +33,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/reissue", "/flashcard", "/categories/**").permitAll()
+                        .requestMatchers("/", "/reissue").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new CustomAuthenticationHandler())

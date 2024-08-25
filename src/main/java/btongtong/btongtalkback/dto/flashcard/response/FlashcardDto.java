@@ -1,4 +1,4 @@
-package btongtong.btongtalkback.dto;
+package btongtong.btongtalkback.dto.flashcard.response;
 
 import lombok.Getter;
 

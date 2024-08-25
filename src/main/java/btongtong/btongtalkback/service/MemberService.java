@@ -1,37 +1,65 @@
 package btongtong.btongtalkback.service;
 
 import btongtong.btongtalkback.domain.Member;
-import btongtong.btongtalkback.jwt.JwtUtil;
+import btongtong.btongtalkback.dto.auth.ReissueDto;
+import btongtong.btongtalkback.dto.member.response.MemberDto;
+import btongtong.btongtalkback.util.JwtUtil;
 import btongtong.btongtalkback.repository.MemberRepository;
+import btongtong.btongtalkback.util.OauthUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MemberService {
     private final JwtUtil jwtUtil;
+    private final OauthUtil oauthUtil;
     private final MemberRepository memberRepository;
 
-    @Transactional
-    public void updateRefreshToken(String id, String refreshToken) {
-        Member member = memberRepository.findById(Long.parseLong(id)).orElseThrow(IllegalArgumentException::new);
+    public Member getMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public MemberDto getMember(Long memberId) {
+        Member member = getMemberById(memberId);
+        return new MemberDto(member);
+    }
+
+    public void updateRefreshToken(Long memberId, String refreshToken) {
+        Member member = getMemberById(memberId);
         member.updateRefreshToken(refreshToken);
     }
 
-    @Transactional
-    public ResponseEntity logout(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
-        member.updateRefreshToken("");
+    public void logout (Long memberId) {
+        updateRefreshToken(memberId, "");
+    }
 
-        ResponseCookie cookie = jwtUtil.createResponseCookie("Authorization", "", 0);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .build();
+    public void withdraw(Long memberId) {
+        Member member = getMemberById(memberId);
+        oauthUtil.unlinkAccount(member);
+        memberRepository.delete(member);
+    }
+
+    public ReissueDto reissue(String refresh) {
+        try {
+            jwtUtil.isValid(refresh);
+            String id = jwtUtil.getId(refresh);
+            String role = jwtUtil.getRole(refresh);
+
+            String newAccess = jwtUtil.createAccessToken(id, role);
+            String newRefresh = jwtUtil.createRefreshToken(id, role);
+            ResponseCookie cookie = jwtUtil.createResponseCookie(HttpHeaders.AUTHORIZATION, newRefresh, jwtUtil.refreshExpireSecond);
+
+            updateRefreshToken(Long.parseLong(id), newRefresh);
+            return new ReissueDto(newAccess, cookie);
+
+        } catch (ExpiredJwtException e) {
+            throw new IllegalArgumentException("refresh token expired");
+        }
     }
 }

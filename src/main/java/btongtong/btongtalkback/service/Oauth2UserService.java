@@ -1,8 +1,8 @@
 package btongtong.btongtalkback.service;
 
 import btongtong.btongtalkback.domain.Member;
-import btongtong.btongtalkback.dto.*;
-import btongtong.btongtalkback.jwt.JwtUtil;
+import btongtong.btongtalkback.dto.auth.OauthAttributes;
+import btongtong.btongtalkback.util.JwtUtil;
 import btongtong.btongtalkback.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +30,8 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
         String oauthToken = userRequest.getAccessToken().getTokenValue();
 
+        System.out.println(oAuth2User.getAttributes());
+
         OauthAttributes attributes = OauthAttributes.of(registrationId, oAuth2User.getAttributes());
 
         // 멤버 create or update(토큰)
@@ -47,6 +49,9 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
 
         member.updateOauthAccessToken(accessToken);
         member.updateRefreshToken(refreshToken);
+        member.updateProfile(attributes.toEntity());
+
+        memberRepository.save(member);
 
         attributes.updateAttributes("refresh", refreshToken);
     }
