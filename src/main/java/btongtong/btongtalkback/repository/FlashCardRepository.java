@@ -28,4 +28,5 @@ public interface FlashCardRepository extends JpaRepository<Flashcard, Long> {
             "LEFT JOIN f.category c " +
             "WHERE f.question LIKE %:question%")
     Page<SearchFlashcardDto> findFlashcardsByQuestion(@Param("memberId") Long memberId, @Param("question") String question, Pageable pageable);
+
 }

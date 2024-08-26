@@ -28,13 +28,4 @@ public class Flashcard {
     @OneToMany(mappedBy = "flashcard", cascade = CascadeType.ALL)
     private List<Record> records = new ArrayList<>();
 
-    public Flashcard(Category category, String question, String answer) {
-        this.category = category;
-        this.question = question;
-        this.answer = answer;
-
-        if(category != null) {
-            category.getFlashcards().add(this);
-        }
-    }
 }

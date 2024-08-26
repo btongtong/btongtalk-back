@@ -13,9 +13,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "SELECT new btongtong.btongtalkback.dto.category.response.CategoryDto(p.id, p.name, p.description, COUNT(c.id)) " +
             "FROM Category p " +
             "LEFT JOIN p.children c " +
-            "WHERE p.depth = :depth " +
+            "WHERE p.parent.id IS NULL " +
             "GROUP BY p.id, p.name")
-    List<CategoryDto> findRootsWithChildrenCnt (@Param("depth") int depth);
+    List<CategoryDto> findRootsWithChildrenCnt ();
 
     @Query(value =
             "SELECT new btongtong.btongtalkback.dto.category.response.CategoryDto(c.id, c.name, c.description, COUNT(f.id)) " +

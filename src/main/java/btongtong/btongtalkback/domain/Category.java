@@ -24,7 +24,6 @@ public class Category {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
-    private int depth;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Category> children = new ArrayList<>();
@@ -32,16 +31,4 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Flashcard> flashcards = new ArrayList<>();
 
-    @Builder
-    public Category(String name, Category parent) {
-        this.name = name;
-        this.parent = parent;
-
-        if(parent != null) {
-            this.depth = parent.depth+1;
-            parent.getChildren().add(this);
-        } else {
-            this.depth = 0;
-        }
-    }
 }

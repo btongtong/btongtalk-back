@@ -14,8 +14,8 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public List<CategoryDto> getRootWithChildrenCnt(int depth) {
-        return categoryRepository.findRootsWithChildrenCnt(depth);
+    public List<CategoryDto> getRootWithChildrenCnt() {
+        return categoryRepository.findRootsWithChildrenCnt();
     }
 
     public SubCategoryDto getSubWithFlashcardCntAndRoot(Long categoryId) {

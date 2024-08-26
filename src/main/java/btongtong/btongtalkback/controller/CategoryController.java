@@ -19,7 +19,7 @@ public class CategoryController {
 
     @GetMapping("/categories")
     public ResponseEntity<?> rootCategories() {
-        List<CategoryDto> response = categoryService.getRootWithChildrenCnt(1);
+        List<CategoryDto> response = categoryService.getRootWithChildrenCnt();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

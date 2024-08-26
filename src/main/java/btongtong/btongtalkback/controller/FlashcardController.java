@@ -32,9 +32,8 @@ public class FlashcardController {
                                              @AuthenticationPrincipal AuthDto authDto,
                                              @RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "2") int size) {
-        Long memberId = (authDto != null) ? authDto.getId() : null;
         Pageable pageable = PageRequest.of(page, size);
-        SearchFlashcardsWithTotalPagesDto response = flashcardService.searchFlashcards(memberId, question, pageable);
+        SearchFlashcardsWithTotalPagesDto response = flashcardService.searchFlashcards(authDto.getId(), question, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

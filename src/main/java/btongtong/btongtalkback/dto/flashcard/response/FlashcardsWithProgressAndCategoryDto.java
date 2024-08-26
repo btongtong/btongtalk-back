@@ -18,8 +18,4 @@ public class FlashcardsWithProgressAndCategoryDto {
         this.flashcardList = flashcardList;
     }
 
-    public FlashcardsWithProgressAndCategoryDto updateFlashcards (List<FlashcardWithProgressDto> flashcardList) {
-        this.flashcardList = flashcardList;
-        return this;
-    }
 }

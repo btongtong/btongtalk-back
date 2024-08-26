@@ -6,6 +6,7 @@ import btongtong.btongtalkback.domain.Record;
 import btongtong.btongtalkback.constant.RecordStatus;
 import btongtong.btongtalkback.dto.record.request.FlashcardIdAndStatusDto;
 import btongtong.btongtalkback.dto.record.request.CategoryIdAndProgressDto;
+import btongtong.btongtalkback.dto.record.response.RecordStatisticsByFlashcardDto;
 import btongtong.btongtalkback.dto.record.response.RecordsByStatusWithTotalPages;
 import btongtong.btongtalkback.dto.record.response.RecordDto;
 import btongtong.btongtalkback.dto.record.response.RecordStatisticsDto;
@@ -15,8 +16,6 @@ import btongtong.btongtalkback.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,14 +30,13 @@ public class RecordService {
     private final FlashCardRepository flashCardRepository;
 
     @Transactional
-    public ResponseEntity findRecordsByStatus(Long memberId, RecordStatus status, Pageable pageable) {
+    public RecordsByStatusWithTotalPages getRecordsByStatus(Long memberId, RecordStatus status, Pageable pageable) {
         Page<RecordDto> recordByStatus = recordRepository.findRecordsByStatus(memberId, status, pageable);
-        RecordsByStatusWithTotalPages recordByStatusCombiDto = new RecordsByStatusWithTotalPages(recordByStatus.getContent(), recordByStatus.getTotalPages());
-        return ResponseEntity.status(HttpStatus.OK).body(recordByStatusCombiDto);
+        return new RecordsByStatusWithTotalPages(recordByStatus.getContent(), recordByStatus.getTotalPages());
     }
 
     @Transactional
-    public ResponseEntity saveRecord(FlashcardIdAndStatusDto dto, Long memberId) {
+    public void postRecordStatus (FlashcardIdAndStatusDto dto, Long memberId) {
         Long flashcardId = dto.getFlashcardId();
         RecordStatus status = dto.getStatus();
 
@@ -64,18 +62,20 @@ public class RecordService {
         }
 
         recordRepository.save(record);
-
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @Transactional
-    public ResponseEntity updateProgress(CategoryIdAndProgressDto dto, Long memberId) {
+    public void updateProgress(CategoryIdAndProgressDto dto, Long memberId) {
         recordRepository.updateProgress(memberId, dto.getCategoryId(), dto.getProgress());
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    public ResponseEntity statistics(Long memberId, RecordStatus status) {
-        List<RecordStatisticsDto> statistics = recordRepository.findRecordStatistics(memberId, status);
-        return ResponseEntity.status(HttpStatus.OK).body(statistics);
+    @Transactional
+    public List<RecordStatisticsDto> getStatistics(Long memberId, RecordStatus status) {
+        return recordRepository.findRecordStatistics(memberId, status);
+    }
+
+    @Transactional
+    public RecordStatisticsByFlashcardDto getStatisticsByStatus(Long memberId, Long categoryId) {
+        return recordRepository.findRecordStatisticsByStatus(memberId, categoryId);
     }
 }

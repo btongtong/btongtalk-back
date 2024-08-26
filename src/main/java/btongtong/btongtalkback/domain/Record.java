@@ -49,6 +49,7 @@ public class Record {
 
     public void updateStatus(RecordStatus status) {
         this.status = status;
+        this.progress = true;
         this.recordDate = LocalDateTime.now();
     }
 

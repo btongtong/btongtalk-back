@@ -1,5 +1,6 @@
 package btongtong.btongtalkback.dto.record.response;
 
+import btongtong.btongtalkback.constant.RecordStatus;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -10,13 +11,13 @@ public class RecordDto {
     private String name;
     private String question;
     private LocalDateTime datetime;
-    private Boolean progress;
+    private RecordStatus status;
 
-    public RecordDto(String name, Long id, String question, LocalDateTime datetime, Boolean progress) {
+    public RecordDto(String name, Long id, String question, LocalDateTime datetime, RecordStatus status) {
         this.id = id;
         this.name = name;
         this.question = question;
         this.datetime = datetime;
-        this.progress = progress;
+        this.status = status;
     }
 }

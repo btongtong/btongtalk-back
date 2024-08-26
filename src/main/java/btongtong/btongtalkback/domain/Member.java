@@ -50,7 +50,7 @@ public class Member {
         this.refreshToken = refreshToken;
     }
 
-    // 토큰 업데이트
+    // 업데이트
     public void updateOauthAccessToken(String oauthAccessToken) {
         this.oauthAccessToken = oauthAccessToken;
     }
