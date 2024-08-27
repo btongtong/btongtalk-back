@@ -27,7 +27,7 @@ public class RecordController {
     public ResponseEntity<?> recordsByStatus(@RequestParam("status") RecordStatus status,
                                             @AuthenticationPrincipal AuthDto authDto,
                                             @RequestParam(defaultValue = "0") int page,
-                                            @RequestParam(defaultValue = "2") int size) {
+                                            @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         RecordsByStatusWithTotalPages response = recordService.getRecordsByStatus(authDto.getId(), status, pageable);

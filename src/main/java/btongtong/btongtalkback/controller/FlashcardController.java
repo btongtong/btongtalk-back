@@ -31,7 +31,7 @@ public class FlashcardController {
     public ResponseEntity<?> searchFlashcards (@RequestParam("question") String question,
                                              @AuthenticationPrincipal AuthDto authDto,
                                              @RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "2") int size) {
+                                             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         SearchFlashcardsWithTotalPagesDto response = flashcardService.searchFlashcards(authDto.getId(), question, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
