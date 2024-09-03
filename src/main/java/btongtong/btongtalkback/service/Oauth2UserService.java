@@ -30,8 +30,6 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
         String oauthToken = userRequest.getAccessToken().getTokenValue();
 
-        System.out.println(oAuth2User.getAttributes());
-
         OauthAttributes attributes = OauthAttributes.of(registrationId, oAuth2User.getAttributes());
 
         // 멤버 create or update(토큰)

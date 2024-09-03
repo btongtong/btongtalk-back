@@ -20,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class RecordController {
     private final RecordService recordService;
 
