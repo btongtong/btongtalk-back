@@ -1,5 +1,6 @@
 package btongtong.btongtalkback.handler;
 
+import btongtong.btongtalkback.constant.ErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,13 +13,14 @@ public class CustomAuthenticationHandler implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        makeErrorMessage(response, (String) request.getAttribute("exception"));
-        return;
+        if((boolean)request.getAttribute("exception")) {
+            makeErrorMessage(response);
+        }
     }
 
-    private void makeErrorMessage(HttpServletResponse response, String errorMessage) throws IOException{
+    private void makeErrorMessage(HttpServletResponse response) throws IOException{
         response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("{\"message\": \""+errorMessage+"\"}");
+        response.setStatus(ErrorCode.TOKEN_NOT_VALID.getStatus().value());
+        response.getWriter().write("{\"code\": \"" + ErrorCode.TOKEN_NOT_VALID.getCode() + "\", \"message\": \"" + ErrorCode.TOKEN_NOT_VALID.getMessage() + "\"}");
     }
 }

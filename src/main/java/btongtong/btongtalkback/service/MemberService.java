@@ -1,8 +1,10 @@
 package btongtong.btongtalkback.service;
 
+import btongtong.btongtalkback.constant.ErrorCode;
 import btongtong.btongtalkback.domain.Member;
 import btongtong.btongtalkback.dto.auth.ReissueDto;
 import btongtong.btongtalkback.dto.member.response.MemberDto;
+import btongtong.btongtalkback.handler.exception.CustomException;
 import btongtong.btongtalkback.util.JwtUtil;
 import btongtong.btongtalkback.repository.MemberRepository;
 import btongtong.btongtalkback.util.OauthUtil;
@@ -22,7 +24,7 @@ public class MemberService {
 
     public Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
     }
 
     public MemberDto getMember(Long memberId) {

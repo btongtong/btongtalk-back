@@ -20,27 +20,29 @@ import java.util.Collections;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final String authorization = "Authorization";
+    private final String exception = "exception";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = request.getHeader("Authorization");
+        String accessToken = request.getHeader(authorization);
 
         if(accessToken == null) {
-            request.setAttribute("exception", "access token is null");
+            request.setAttribute(exception, true);
             filterChain.doFilter(request, response);
             return;
         }
 
         // token valid
         if(!jwtUtil.isValid(accessToken)) {
-            request.setAttribute("exception", "Token is not valid.");
+            request.setAttribute(exception, true);
             filterChain.doFilter(request, response);
             return;
         }
 
         // token type
         if(!jwtUtil.getType(accessToken).equals("access")) {
-            request.setAttribute("exception", "token type is not valid");
+            request.setAttribute(exception, true);
             filterChain.doFilter(request, response);
             return;
         }
