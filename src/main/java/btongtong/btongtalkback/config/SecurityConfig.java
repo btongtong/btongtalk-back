@@ -2,6 +2,7 @@ package btongtong.btongtalkback.config;
 
 import btongtong.btongtalkback.handler.CustomAccessDeniedHandler;
 import btongtong.btongtalkback.handler.CustomAuthenticationHandler;
+import btongtong.btongtalkback.handler.Oauth2FailureHandler;
 import btongtong.btongtalkback.handler.Oauth2SuccessHandler;
 import btongtong.btongtalkback.filter.JwtFilter;
 import btongtong.btongtalkback.util.JwtUtil;
@@ -24,8 +25,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final CustomAuthenticationHandler customAuthenticationHandler;
     private final Oauth2UserService oauth2UserService;
     private final Oauth2SuccessHandler oauth2SuccessHandler;
+    private final Oauth2FailureHandler oauth2FailureHandler;
     private final JwtUtil jwtUtil;
     @Value("${domain.name}")
     private String domainName;
@@ -41,7 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/reissue", "/api/oauth2/**", "/api/login/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint(new CustomAuthenticationHandler())
+                        .authenticationEntryPoint(customAuthenticationHandler)
                         .accessDeniedHandler(new CustomAccessDeniedHandler()))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -49,7 +52,8 @@ public class SecurityConfig {
                         .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/oauth2/authorization"))
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/api/login/oauth2/code/*"))
                         .userInfoEndpoint(userInfo -> userInfo.userService(oauth2UserService))
-                        .successHandler(oauth2SuccessHandler))
+                        .successHandler(oauth2SuccessHandler)
+                        .failureHandler(oauth2FailureHandler))
                 .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

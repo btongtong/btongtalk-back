@@ -1,5 +1,6 @@
 package btongtong.btongtalkback.filter;
 
+import btongtong.btongtalkback.constant.ErrorCode;
 import btongtong.btongtalkback.dto.auth.AuthDto;
 import btongtong.btongtalkback.util.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -28,21 +29,21 @@ public class JwtFilter extends OncePerRequestFilter {
         String accessToken = request.getHeader(authorization);
 
         if(accessToken == null) {
-            request.setAttribute(exception, true);
+            request.setAttribute(exception, ErrorCode.TOKEN_NOT_VALID);
             filterChain.doFilter(request, response);
             return;
         }
 
         // token valid
         if(!jwtUtil.isValid(accessToken)) {
-            request.setAttribute(exception, true);
+            request.setAttribute(exception, ErrorCode.TOKEN_NOT_VALID);
             filterChain.doFilter(request, response);
             return;
         }
 
         // token type
         if(!jwtUtil.getType(accessToken).equals("access")) {
-            request.setAttribute(exception, true);
+            request.setAttribute(exception, ErrorCode.TOKEN_NOT_VALID);
             filterChain.doFilter(request, response);
             return;
         }

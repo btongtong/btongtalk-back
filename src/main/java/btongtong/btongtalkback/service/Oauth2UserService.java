@@ -45,7 +45,7 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
     public void updateOrSave(OauthAttributes attributes, String accessToken) {
         Member member = memberRepository.findByEmail(attributes.getEmail()).orElseGet(() -> memberRepository.save(attributes.toEntity()));
         if(!Objects.equals(member.getProvider(), attributes.getProvider()) || !Objects.equals(member.getOauthKey(), attributes.getOauthKey())) {
-            throw new CustomException(ErrorCode.DUPLICATE_CONTENT);
+            throw new OAuth2AuthenticationException(ErrorCode.DUPLICATE_CONTENT.getMessage());
         }
         String refreshToken = jwtUtil.createRefreshToken(String.valueOf(member.getId()), String.valueOf(member.getRole()));
 
