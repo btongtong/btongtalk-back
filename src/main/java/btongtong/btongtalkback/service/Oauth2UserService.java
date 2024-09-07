@@ -1,7 +1,9 @@
 package btongtong.btongtalkback.service;
 
+import btongtong.btongtalkback.constant.ErrorCode;
 import btongtong.btongtalkback.domain.Member;
 import btongtong.btongtalkback.dto.auth.OauthAttributes;
+import btongtong.btongtalkback.handler.exception.CustomException;
 import btongtong.btongtalkback.util.JwtUtil;
 import btongtong.btongtalkback.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -40,9 +43,10 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
 
     @Transactional
     public void updateOrSave(OauthAttributes attributes, String accessToken) {
-        Member member = memberRepository.findByOauthKeyAndProvider(attributes.getOauthKey(), attributes.getProvider())
-                .orElseGet(() -> memberRepository.save(attributes.toEntity()));
-
+        Member member = memberRepository.findByEmail(attributes.getEmail()).orElseGet(() -> memberRepository.save(attributes.toEntity()));
+        if(!Objects.equals(member.getProvider(), attributes.getProvider()) || !Objects.equals(member.getOauthKey(), attributes.getOauthKey())) {
+            throw new CustomException(ErrorCode.DUPLICATE_CONTENT);
+        }
         String refreshToken = jwtUtil.createRefreshToken(String.valueOf(member.getId()), String.valueOf(member.getRole()));
 
         member.updateOauthAccessToken(accessToken);
