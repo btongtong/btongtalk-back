@@ -53,15 +53,21 @@ public class MemberService {
             String id = jwtUtil.getId(refresh);
             String role = jwtUtil.getRole(refresh);
 
+            // refresh RTR
+            Member member = getMemberById(Long.parseLong(id));
+            if(!member.getRefreshToken().equals(refresh)) {
+                throw new CustomException(ErrorCode.TOKEN_NOT_VALID);
+            }
+
             String newAccess = jwtUtil.createAccessToken(id, role);
             String newRefresh = jwtUtil.createRefreshToken(id, role);
             ResponseCookie cookie = jwtUtil.createResponseCookie(HttpHeaders.AUTHORIZATION, newRefresh, jwtUtil.refreshExpireSecond);
 
-            updateRefreshToken(Long.parseLong(id), newRefresh);
+            member.updateRefreshToken(newRefresh);
             return new ReissueDto(newAccess, cookie);
 
-        } catch (ExpiredJwtException e) {
-            throw new IllegalArgumentException("refresh token expired");
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.TOKEN_NOT_VALID);
         }
     }
 }
