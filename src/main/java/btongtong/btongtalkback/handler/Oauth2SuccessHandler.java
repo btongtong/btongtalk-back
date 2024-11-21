@@ -26,6 +26,6 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = (String) ((DefaultOAuth2User) authentication.getPrincipal()).getAttributes().get("refresh");
         response.addCookie(jwtUtil.createCookie("Authorization", refreshToken, jwtUtil.refreshExpireSecond));
 
-        response.sendRedirect(domainName);
+        response.sendRedirect(domainName + "/oauth");
     }
 }
