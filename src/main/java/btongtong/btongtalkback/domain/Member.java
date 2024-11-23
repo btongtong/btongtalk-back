@@ -2,7 +2,7 @@ package btongtong.btongtalkback.domain;
 
 import btongtong.btongtalkback.constant.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.hypersistence.utils.hibernate.id.Tsid;
+import com.github.f4b6a3.tsid.TsidCreator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,7 +17,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
     @Id
-    @Tsid
     @Column(name = "member_id")
     private Long id;
 
@@ -36,6 +35,13 @@ public class Member {
     @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Record> records = new ArrayList<>();
+
+    @PrePersist
+    public void setId() {
+        if (this.id == null) {
+            this.id = TsidCreator.getTsid().toLong();
+        }
+    }
 
     // 생성자
     @Builder

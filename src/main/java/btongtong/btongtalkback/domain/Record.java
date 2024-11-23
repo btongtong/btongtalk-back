@@ -1,6 +1,7 @@
 package btongtong.btongtalkback.domain;
 
 import btongtong.btongtalkback.constant.RecordStatus;
+import com.github.f4b6a3.tsid.TsidCreator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Record {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     @Column(name = "record_id")
     private Long id;
 
@@ -30,6 +31,13 @@ public class Record {
 
     private Boolean progress;
     private LocalDateTime recordDate;
+
+    @PrePersist
+    public void setId() {
+        if (this.id == null) {
+            this.id = TsidCreator.getTsid().toLong();
+        }
+    }
 
     @Builder
     public Record(Member member, Flashcard flashcard, RecordStatus status, Boolean progress) {

@@ -1,5 +1,6 @@
 package btongtong.btongtalkback.service;
 
+import btongtong.btongtalkback.constant.ErrorCode;
 import btongtong.btongtalkback.domain.Flashcard;
 import btongtong.btongtalkback.domain.Member;
 import btongtong.btongtalkback.domain.Record;
@@ -10,6 +11,7 @@ import btongtong.btongtalkback.dto.record.response.RecordStatisticsByFlashcardDt
 import btongtong.btongtalkback.dto.record.response.RecordsByStatusWithTotalPages;
 import btongtong.btongtalkback.dto.record.response.RecordDto;
 import btongtong.btongtalkback.dto.record.response.RecordStatisticsDto;
+import btongtong.btongtalkback.handler.exception.CustomException;
 import btongtong.btongtalkback.repository.FlashCardRepository;
 import btongtong.btongtalkback.repository.MemberRepository;
 import btongtong.btongtalkback.repository.RecordRepository;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,28 +41,23 @@ public class RecordService {
         Long flashcardId = dto.getFlashcardId();
         RecordStatus status = dto.getStatus();
 
-        Optional<Record> optionalRecord = recordRepository.findByMemberIdAndFlashcardId(memberId, flashcardId);
-        Record record;
+        Record record = recordRepository.findByMemberIdAndFlashcardId(memberId, flashcardId)
+                .orElseGet(() -> recordRepository.save(createRecord(flashcardId, memberId, status)));
+        record.updateStatus(status);
+    }
 
-        if(optionalRecord.isPresent()) {
-            record = optionalRecord.get();
-            record.updateStatus(status);
-        } else {
-            Member member = memberRepository
-                    .findById(memberId)
-                    .orElseThrow(IllegalArgumentException::new);
-            Flashcard flashcard = flashCardRepository
-                    .findById(dto.getFlashcardId())
-                    .orElseThrow(IllegalArgumentException::new);
-            record = Record.builder()
-                    .member(member)
-                    .status(status)
-                    .flashcard(flashcard)
-                    .progress(true)
-                    .build();
-        }
+    private Record createRecord(Long flashcardId, Long memberId, RecordStatus status) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+        Flashcard flashcard = flashCardRepository.findById(flashcardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
 
-        recordRepository.save(record);
+        return Record.builder()
+                .member(member)
+                .status(status)
+                .flashcard(flashcard)
+                .progress(true)
+                .build();
     }
 
     @Transactional
