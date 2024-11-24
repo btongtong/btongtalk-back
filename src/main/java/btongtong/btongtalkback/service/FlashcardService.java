@@ -1,8 +1,10 @@
 package btongtong.btongtalkback.service;
 
+import btongtong.btongtalkback.constant.ErrorCode;
 import btongtong.btongtalkback.domain.Category;
 import btongtong.btongtalkback.domain.Flashcard;
 import btongtong.btongtalkback.dto.flashcard.response.*;
+import btongtong.btongtalkback.handler.exception.CustomException;
 import btongtong.btongtalkback.repository.CategoryRepository;
 import btongtong.btongtalkback.repository.FlashCardRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +23,16 @@ public class FlashcardService {
 
     @Transactional
     public FlashcardsWithProgressAndCategoryDto getFlashcardsWithProgressAndCategory (Long categoryId, Long memberId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(IllegalArgumentException::new);
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
         List<FlashcardWithProgressDto> flashcards = flashCardRepository.findFlashcardWithProgress(memberId, categoryId);
         return new FlashcardsWithProgressAndCategoryDto(category, flashcards);
     }
 
     @Transactional
     public FlashcardWithCategoryDto getFlashcard(Long flashcardId) {
-        Flashcard flashcard = flashCardRepository.findById(flashcardId).orElseThrow(IllegalArgumentException::new);
+        Flashcard flashcard = flashCardRepository.findById(flashcardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
         return new FlashcardWithCategoryDto(flashcard);
     }
 
