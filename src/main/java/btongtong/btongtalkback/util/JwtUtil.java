@@ -26,15 +26,30 @@ public class JwtUtil {
     }
 
     public String getId(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("id", String.class);
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
+                    .get("id", String.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String getRole(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
+                    .get("role", String.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String getType(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("type", String.class);
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
+                    .get("type", String.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public Boolean isValid(String token) {
