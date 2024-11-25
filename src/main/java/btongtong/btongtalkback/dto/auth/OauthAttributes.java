@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
+@Builder
 public class OauthAttributes {
     private Map<String, Object> attributes;
     private String oauthKey;
@@ -17,17 +18,6 @@ public class OauthAttributes {
     private String email;
     private String name;
     private Role role;
-
-    @Builder
-    public OauthAttributes(Map<String, Object> attributes, String oauthKey, String provider, String profileImg, String email, String name, Role role) {
-        this.attributes = attributes;
-        this.oauthKey = oauthKey;
-        this.provider = provider;
-        this.profileImg = profileImg;
-        this.email = email;
-        this.name = name;
-        this.role = role;
-    }
 
     public static OauthAttributes of(String registrationId, Map<String, Object> attributes) {
         switch (registrationId) {
