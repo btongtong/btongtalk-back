@@ -10,7 +10,8 @@ public enum ErrorCode {
     CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CE", "Content doesn't exist."),
     TOKEN_NOT_VALID(HttpStatus.UNAUTHORIZED, "TE", "Token is not valid."),
     DUPLICATE_CONTENT(HttpStatus.CONFLICT, "DE", "Duplicated content."),
-    NOT_EXIST_PROVIDER(HttpStatus.BAD_REQUEST, "NP", "No such Provider.");
+    NOT_EXIST_PROVIDER(HttpStatus.BAD_REQUEST, "NP", "No such Provider."),
+    OAUTH_ERROR(HttpStatus.BAD_REQUEST, "OE", "Oauth2 error.");
 
     private final HttpStatus status;
     private final String code;
@@ -20,5 +21,14 @@ public enum ErrorCode {
         this.status = status;
         this.code = code;
         this.message = message;
+    }
+
+    public static ErrorCode getErrorByCode(String code) {
+        for (ErrorCode errorCode : ErrorCode.values()) {
+            if (errorCode.getCode().equals(code)) {
+                return errorCode;
+            }
+        }
+        return OAUTH_ERROR;
     }
 }
