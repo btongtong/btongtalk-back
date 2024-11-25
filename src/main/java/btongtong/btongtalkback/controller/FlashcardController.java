@@ -20,18 +20,21 @@ public class FlashcardController {
     private final FlashcardService flashcardService;
 
     @GetMapping("/categories/{categoryId}/flashcards")
-    public ResponseEntity<?> FlashcardsWithProgressAndCategory (@PathVariable("categoryId") Long categoryId, @AuthenticationPrincipal AuthDto memberDto) {
-        FlashcardsWithProgressAndCategoryDto response = flashcardService.getFlashcardsWithProgressAndCategory(categoryId, memberDto.getId());
+    public ResponseEntity<?> FlashcardsWithProgressAndCategory (@PathVariable("categoryId") Long categoryId,
+                                                                @AuthenticationPrincipal AuthDto memberDto) {
+        FlashcardsWithProgressAndCategoryDto response = flashcardService
+                .getFlashcardsWithProgressAndCategory(categoryId, memberDto.getId());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/flashcards")
     public ResponseEntity<?> searchFlashcards (@RequestParam("question") String question,
-                                             @AuthenticationPrincipal AuthDto authDto,
-                                             @RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "10") int size) {
+                                               @AuthenticationPrincipal AuthDto authDto,
+                                               @RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        SearchFlashcardsWithTotalPagesDto response = flashcardService.searchFlashcards(authDto.getId(), question, pageable);
+        SearchFlashcardsWithTotalPagesDto response = flashcardService
+                .searchFlashcards(authDto.getId(), question, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

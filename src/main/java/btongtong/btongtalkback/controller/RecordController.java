@@ -26,9 +26,9 @@ public class RecordController {
 
     @GetMapping("/records")
     public ResponseEntity<?> recordsByStatus(@RequestParam("status") RecordStatus status,
-                                            @AuthenticationPrincipal AuthDto authDto,
-                                            @RequestParam(defaultValue = "0") int page,
-                                            @RequestParam(defaultValue = "10") int size) {
+                                             @AuthenticationPrincipal AuthDto authDto,
+                                             @RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         RecordsByStatusWithTotalPages response = recordService.getRecordsByStatus(authDto.getId(), status, pageable);
@@ -36,25 +36,29 @@ public class RecordController {
     }
 
     @GetMapping("/records/statistics")
-    public ResponseEntity<?> recordStatistics(@RequestParam("status") RecordStatus status, @AuthenticationPrincipal AuthDto authDto) {
+    public ResponseEntity<?> recordStatistics(@RequestParam("status") RecordStatus status,
+                                              @AuthenticationPrincipal AuthDto authDto) {
         List<RecordStatisticsDto> response = recordService.getStatistics(authDto.getId(), status);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/records/statistics/status")
-    public ResponseEntity<?> recordStatisticsByStatus(@RequestParam("categoryId") Long categoryId, @AuthenticationPrincipal AuthDto authDto) {
+    public ResponseEntity<?> recordStatisticsByStatus(@RequestParam("categoryId") Long categoryId,
+                                                      @AuthenticationPrincipal AuthDto authDto) {
         RecordStatisticsByFlashcardDto response = recordService.getStatisticsByStatus(authDto.getId(), categoryId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/records/record")
-    public ResponseEntity<?> updateRecordStatus (@RequestBody FlashcardIdAndStatusDto dto, @AuthenticationPrincipal AuthDto authDto) {
+    public ResponseEntity<?> updateRecordStatus (@RequestBody FlashcardIdAndStatusDto dto,
+                                                 @AuthenticationPrincipal AuthDto authDto) {
         recordService.postRecordStatus(dto, authDto.getId());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/records")
-    public ResponseEntity<?> updateRecordProgress(@RequestBody CategoryIdAndProgressDto dto, @AuthenticationPrincipal AuthDto authDto) {
+    public ResponseEntity<?> updateRecordProgress(@RequestBody CategoryIdAndProgressDto dto,
+                                                  @AuthenticationPrincipal AuthDto authDto) {
         recordService.updateProgress(dto, authDto.getId());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
