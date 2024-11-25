@@ -17,7 +17,9 @@ import java.io.IOException;
 public class CustomAuthenticationHandler implements AuthenticationEntryPoint {
     private final FilterUtil filterUtil;
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request,
+                         HttpServletResponse response,
+                         AuthenticationException authException) throws IOException, ServletException {
         if(request.getAttribute("exception") != null) {
             filterUtil.makeErrorMessage(response, (ErrorCode) request.getAttribute("exception"));
         }
