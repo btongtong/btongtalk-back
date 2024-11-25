@@ -23,43 +23,40 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final String authorization = "Authorization";
     private final String exception = "exception";
+    private final String access = "access";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = request.getHeader(authorization);
-
-        if(accessToken == null) {
+        if(isInvalidateToken(request)) {
             request.setAttribute(exception, ErrorCode.TOKEN_NOT_VALID);
             filterChain.doFilter(request, response);
             return;
         }
 
-        // token valid
-        if(!jwtUtil.isValid(accessToken)) {
-            request.setAttribute(exception, ErrorCode.TOKEN_NOT_VALID);
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // token type
-        if(!jwtUtil.getType(accessToken).equals("access")) {
-            request.setAttribute(exception, ErrorCode.TOKEN_NOT_VALID);
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        authenticateUser(accessToken);
+        authenticateUser(request);
         filterChain.doFilter(request, response);
     }
 
-    private void authenticateUser(String accessToken) {
-        String id = jwtUtil.getId(accessToken);
-        String role = jwtUtil.getRole(accessToken);
+    private boolean isInvalidateToken(HttpServletRequest request) {
+        String token = getToken(request);
+        return token == null || !jwtUtil.isValid(token) || !access.equals(jwtUtil.getType(token));
+    }
+
+    private void authenticateUser(HttpServletRequest request) {
+        String token = getToken(request);
+        String id = jwtUtil.getId(token);
+        String role = jwtUtil.getRole(token);
         setAuthentication(new AuthDto(Long.parseLong(id), role));
     }
 
     private void setAuthentication(AuthDto memberDto) {
-        Authentication authToken = new UsernamePasswordAuthenticationToken(memberDto, null, Collections.singleton(new SimpleGrantedAuthority(memberDto.getRole())));
+        Authentication authToken = new UsernamePasswordAuthenticationToken(memberDto,
+                null,
+                Collections.singleton(new SimpleGrantedAuthority(memberDto.getRole())));
         SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+
+    private String getToken(HttpServletRequest request) {
+        return request.getHeader(authorization);
     }
 }
