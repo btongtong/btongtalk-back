@@ -13,6 +13,7 @@ public class FilterUtil {
     public void makeErrorMessage(HttpServletResponse response, ErrorCode errorCode) throws IOException {
         response.setContentType(contentType);
         response.setStatus(errorCode.getStatus().value());
-        response.getWriter().write("{\"code\": \"" + errorCode.getCode() + "\", \"message\": \"" + errorCode.getMessage() + "\"}");
+        response.getWriter().write(String.format("{\"code\": \"%s\", \"message\": \"%s\"}",
+                errorCode.getCode(), errorCode.getMessage()));
     }
 }
