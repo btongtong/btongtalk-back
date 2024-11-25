@@ -29,32 +29,58 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
-        String oauthToken = userRequest.getAccessToken().getTokenValue();
+        OauthAttributes attributes = OauthAttributes.of(getRegistrationId(userRequest), oAuth2User.getAttributes());
+        updateOrSaveMember(attributes, getOauthToken(userRequest));
 
-        OauthAttributes attributes = OauthAttributes.of(registrationId, oAuth2User.getAttributes());
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(attributes.getRole().name())),
+                attributes.getAttributes(),
+                getUserNameAttributeName(userRequest));
+    }
 
-        // 멤버 create or update(토큰)
-        updateOrSave(attributes, oauthToken);
+    private static String getRegistrationId(OAuth2UserRequest userRequest) {
+        return userRequest.getClientRegistration().getRegistrationId();
+    }
 
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(attributes.getRole().name())), attributes.getAttributes(), userNameAttributeName);
+    private static String getUserNameAttributeName(OAuth2UserRequest userRequest) {
+        return userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
+    }
+
+    private static String getOauthToken(OAuth2UserRequest userRequest) {
+        return userRequest.getAccessToken().getTokenValue();
     }
 
     @Transactional
-    public void updateOrSave(OauthAttributes attributes, String accessToken) {
-        Member member = memberRepository.findByEmail(attributes.getEmail()).orElseGet(() -> memberRepository.save(attributes.toEntity()));
-        if(!Objects.equals(member.getProvider(), attributes.getProvider()) || !Objects.equals(member.getOauthKey(), attributes.getOauthKey())) {
-            throw new OAuth2AuthenticationException(ErrorCode.DUPLICATE_CONTENT.getCode());
-        }
-        String refreshToken = jwtUtil.createRefreshToken(String.valueOf(member.getId()), String.valueOf(member.getRole()));
+    public void updateOrSaveMember(OauthAttributes attributes, String oauthToken) {
+        Member member = findOrCreateMember(attributes);
+        validateDuplication(attributes, member);
 
-        member.updateOauthAccessToken(accessToken);
-        member.updateRefreshToken(refreshToken);
-        member.updateProfile(attributes.toEntity());
-
+        String refreshToken = getRefreshToken(member);
+        updateMember(member, attributes, oauthToken, refreshToken);
         memberRepository.save(member);
 
         attributes.updateAttributes("refresh", refreshToken);
+    }
+
+    private Member findOrCreateMember(OauthAttributes attributes) {
+        return memberRepository.findByEmail(attributes.getEmail())
+                .orElseGet(() -> memberRepository.save(attributes.toEntity()));
+    }
+
+    private static void validateDuplication(OauthAttributes attributes, Member member) {
+        boolean isSameProvider = Objects.equals(member.getProvider(), attributes.getProvider());
+        boolean isSameOauthKey = Objects.equals(member.getOauthKey(), attributes.getOauthKey());
+        if(!isSameProvider || !isSameOauthKey) {
+            throw new OAuth2AuthenticationException(ErrorCode.DUPLICATE_CONTENT.getCode());
+        }
+    }
+
+    private String getRefreshToken(Member member) {
+        return jwtUtil.createRefreshToken(String.valueOf(member.getId()), String.valueOf(member.getRole()));
+    }
+
+    private static void updateMember(Member member, OauthAttributes attributes, String oauthToken, String refreshToken) {
+        member.updateOauthAccessToken(oauthToken);
+        member.updateRefreshToken(refreshToken);
+        member.updateProfile(attributes.toEntity());
     }
 }
