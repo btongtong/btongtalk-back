@@ -1,5 +1,7 @@
 package btongtong.btongtalkback.constant;
 
+import btongtong.btongtalkback.handler.exception.CustomException;
+
 public enum Provider {
     NAVER, KAKAO;
 
@@ -7,7 +9,7 @@ public enum Provider {
         try {
             return Provider.valueOf(provider.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new UnsupportedOperationException("Unsupported provider: " + provider);
+            throw new CustomException(ErrorCode.NOT_EXIST_PROVIDER);
         }
     }
 }
