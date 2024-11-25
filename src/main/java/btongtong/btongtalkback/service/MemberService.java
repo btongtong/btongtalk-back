@@ -1,25 +1,28 @@
 package btongtong.btongtalkback.service;
 
 import btongtong.btongtalkback.constant.ErrorCode;
+import btongtong.btongtalkback.constant.Provider;
 import btongtong.btongtalkback.domain.Member;
 import btongtong.btongtalkback.dto.auth.ReissueDto;
 import btongtong.btongtalkback.dto.member.response.MemberDto;
 import btongtong.btongtalkback.handler.exception.CustomException;
+import btongtong.btongtalkback.service.unnlink.OauthUnlinkService;
 import btongtong.btongtalkback.util.JwtUtil;
 import btongtong.btongtalkback.repository.MemberRepository;
-import btongtong.btongtalkback.util.OauthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class MemberService {
     private final JwtUtil jwtUtil;
-    private final OauthUtil oauthUtil;
     private final MemberRepository memberRepository;
+    private final List<OauthUnlinkService> unlinkServices;
 
     public Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId)
@@ -42,8 +45,20 @@ public class MemberService {
 
     public void withdraw(Long memberId) {
         Member member = getMemberById(memberId);
-        oauthUtil.unlinkAccount(member);
+        String token = member.getOauthAccessToken();
+        Provider provider = Provider.fromString(member.getProvider());
+
+        OauthUnlinkService service = getUnlinkService(provider);
+
+        service.unlink(token);
         memberRepository.delete(member);
+    }
+
+    private OauthUnlinkService getUnlinkService(Provider provider) {
+        return unlinkServices
+                .stream()
+                .filter(s -> s.getProvider().equals(provider))
+                .findFirst().orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PROVIDER));
     }
 
     public ReissueDto reissue(String refresh) {
