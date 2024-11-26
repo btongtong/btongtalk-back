@@ -8,6 +8,8 @@ import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static btongtong.btongtalkback.constant.Provider.*;
+
 @Getter
 @Builder
 public class OauthAttributes {
@@ -20,11 +22,11 @@ public class OauthAttributes {
     private Role role;
 
     public static OauthAttributes of(String registrationId, Map<String, Object> attributes) {
-        switch (registrationId) {
-            case "naver":
-                return ofNaver(registrationId, attributes);
-            case "kakao":
-                return ofKakao(registrationId, attributes);
+        if (registrationId.equals(NAVER.getType())) {
+            return ofNaver(registrationId, attributes);
+        }
+        if (registrationId.equals(KAKAO.getType())) {
+            return ofKakao(registrationId, attributes);
         }
 
         return null;
@@ -35,11 +37,11 @@ public class OauthAttributes {
 
         return OauthAttributes.builder()
                 .attributes(new HashMap<>(attributes))  // map 수정 가능하도록 새로 만들기 (원래는 unmodifiableMap 형태)
-                .oauthKey((String) response.get("id"))
+                .oauthKey((String) response.get(NAVER.getId()))
                 .provider(provider)
-                .profileImg((String) response.get("profile_image"))
-                .email((String) response.get("email"))
-                .name((String) response.get("name"))
+                .profileImg((String) response.get(NAVER.getProfileImage()))
+                .email((String) response.get(NAVER.getEmail()))
+                .name((String) response.get(NAVER.getName()))
                 .role(Role.USER)
                 .build();
     }
@@ -50,11 +52,11 @@ public class OauthAttributes {
 
         return OauthAttributes.builder()
                 .attributes(new HashMap<>(attributes))
-                .oauthKey(attributes.get("id").toString())
+                .oauthKey(attributes.get(KAKAO.getId()).toString())
                 .provider(provider)
-                .email((String) kakaoAccount.get("email"))
-                .name((String) profile.get("nickname"))
-                .profileImg((String) profile.get("profile_image_url"))
+                .email((String) kakaoAccount.get(KAKAO.getEmail()))
+                .profileImg((String) profile.get(KAKAO.getProfileImage()))
+                .name((String) profile.get(KAKAO.getName()))
                 .role(Role.USER)
                 .build();
     }

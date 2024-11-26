@@ -1,6 +1,5 @@
 package btongtong.btongtalkback.service;
 
-import btongtong.btongtalkback.constant.ErrorCode;
 import btongtong.btongtalkback.domain.Flashcard;
 import btongtong.btongtalkback.domain.Member;
 import btongtong.btongtalkback.domain.Record;
@@ -22,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static btongtong.btongtalkback.constant.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -48,9 +49,9 @@ public class RecordService {
 
     private Record createRecord(Long flashcardId, Long memberId, RecordStatus status) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(CONTENT_NOT_FOUND));
         Flashcard flashcard = flashCardRepository.findById(flashcardId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(CONTENT_NOT_FOUND));
 
         return Record.builder()
                 .member(member)

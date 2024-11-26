@@ -6,12 +6,13 @@ import btongtong.btongtalkback.dto.member.response.MemberDto;
 import btongtong.btongtalkback.service.MemberService;
 import btongtong.btongtalkback.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpHeaders.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class MemberController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(SET_COOKIE, cookie.toString())
                 .build();
     }
 
@@ -44,7 +45,7 @@ public class MemberController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(SET_COOKIE, cookie.toString())
                 .build();
     }
 
@@ -53,7 +54,7 @@ public class MemberController {
         ReissueDto response = memberService.reissue(refresh);
         return ResponseEntity
                 .ok()
-                .header(HttpHeaders.SET_COOKIE, response.getCookie().toString())
+                .header(SET_COOKIE, response.getCookie().toString())
                 .body(response.getAccessToken());
     }
 }

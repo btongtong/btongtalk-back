@@ -1,6 +1,5 @@
 package btongtong.btongtalkback.service;
 
-import btongtong.btongtalkback.constant.ErrorCode;
 import btongtong.btongtalkback.domain.Category;
 import btongtong.btongtalkback.dto.category.response.CategoryDto;
 import btongtong.btongtalkback.dto.category.response.SubCategoryDto;
@@ -10,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static btongtong.btongtalkback.constant.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class CategoryService {
     public SubCategoryDto getSubWithFlashcardCntAndRoot(Long categoryId) {
         List<CategoryDto> subCategories = categoryRepository.findSubsWithFlashcardCnt(categoryId);
         Category rootCategory = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(CONTENT_NOT_FOUND));
         return new SubCategoryDto(subCategories, rootCategory);
     }
 }

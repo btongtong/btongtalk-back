@@ -1,6 +1,5 @@
 package btongtong.btongtalkback.service;
 
-import btongtong.btongtalkback.constant.ErrorCode;
 import btongtong.btongtalkback.constant.Provider;
 import btongtong.btongtalkback.domain.Member;
 import btongtong.btongtalkback.dto.auth.ReissueDto;
@@ -16,6 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static btongtong.btongtalkback.constant.ErrorCode.*;
+import static btongtong.btongtalkback.constant.Token.*;
+import static org.springframework.http.HttpHeaders.*;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -26,7 +29,7 @@ public class MemberService {
 
     public Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(CONTENT_NOT_FOUND));
     }
 
     public MemberDto getMember(Long memberId) {
@@ -58,7 +61,7 @@ public class MemberService {
         return unlinkServices
                 .stream()
                 .filter(s -> s.getProvider().equals(provider))
-                .findFirst().orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PROVIDER));
+                .findFirst().orElseThrow(() -> new CustomException(NOT_EXIST_PROVIDER));
     }
 
     public ReissueDto reissue(String refresh) {
@@ -81,13 +84,13 @@ public class MemberService {
 
     private void validateToken(String token) {
         if (!jwtUtil.isValid(token)) {
-            throw new CustomException(ErrorCode.TOKEN_NOT_VALID);
+            throw new CustomException(TOKEN_NOT_VALID);
         }
     }
 
     private void validateRefreshToken(String token, Member member) {
         if (!member.getRefreshToken().equals(token)) {
-            throw new CustomException(ErrorCode.TOKEN_NOT_VALID);
+            throw new CustomException(TOKEN_NOT_VALID);
         }
     }
 
@@ -100,6 +103,6 @@ public class MemberService {
     }
 
     private ResponseCookie createResponseCookie(String newRefresh) {
-        return jwtUtil.createResponseCookie(HttpHeaders.AUTHORIZATION, newRefresh, jwtUtil.refreshExpireSecond);
+        return jwtUtil.createResponseCookie(AUTHORIZATION, newRefresh, REFRESH.getExpireTime());
     }
 }

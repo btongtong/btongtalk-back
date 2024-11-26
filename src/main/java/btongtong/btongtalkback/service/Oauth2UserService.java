@@ -1,6 +1,7 @@
 package btongtong.btongtalkback.service;
 
 import btongtong.btongtalkback.constant.ErrorCode;
+import btongtong.btongtalkback.constant.Token;
 import btongtong.btongtalkback.domain.Member;
 import btongtong.btongtalkback.dto.auth.OauthAttributes;
 import btongtong.btongtalkback.handler.exception.CustomException;
@@ -18,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Objects;
+
+import static btongtong.btongtalkback.constant.ErrorCode.*;
+import static btongtong.btongtalkback.constant.Token.*;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +62,7 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         updateMember(member, attributes, oauthToken, refreshToken);
         memberRepository.save(member);
 
-        attributes.updateAttributes("refresh", refreshToken);
+        attributes.updateAttributes(REFRESH.getType(), refreshToken);
     }
 
     private Member findOrCreateMember(OauthAttributes attributes) {
@@ -70,7 +74,7 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         boolean isSameProvider = Objects.equals(member.getProvider(), attributes.getProvider());
         boolean isSameOauthKey = Objects.equals(member.getOauthKey(), attributes.getOauthKey());
         if(!isSameProvider || !isSameOauthKey) {
-            throw new OAuth2AuthenticationException(ErrorCode.DUPLICATE_CONTENT.getCode());
+            throw new OAuth2AuthenticationException(DUPLICATE_CONTENT.getCode());
         }
     }
 

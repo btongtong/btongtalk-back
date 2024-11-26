@@ -5,9 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import static btongtong.btongtalkback.constant.Provider.*;
+import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.MediaType.*;
 
 @Component
 @RequiredArgsConstructor
@@ -26,13 +29,13 @@ public class KakaoUnlinkService implements OauthUnlinkService{
 
     private HttpHeaders getHeaders(String token) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + token);
+        headers.setContentType(APPLICATION_FORM_URLENCODED);
+        headers.add(AUTHORIZATION, BEARER_PREFIX + token);
         return headers;
     }
 
     @Override
     public Provider getProvider() {
-        return Provider.KAKAO;
+        return KAKAO;
     }
 }

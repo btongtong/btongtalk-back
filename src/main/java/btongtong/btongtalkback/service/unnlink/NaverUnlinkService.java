@@ -5,14 +5,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import static btongtong.btongtalkback.constant.Provider.*;
+import static org.springframework.http.MediaType.*;
 
 @Component
 @RequiredArgsConstructor
 public class NaverUnlinkService implements OauthUnlinkService{
     private final RestTemplate restTemplate;
+    private static final String REQUEST_BODY = "grant_type=delete&client_id=%s&client_secret=%s&access_token=%s";
 
     @Value("${spring.naver.unlink.url}")
     private String naverUnlinkUrl;
@@ -28,18 +31,17 @@ public class NaverUnlinkService implements OauthUnlinkService{
     }
 
     private String getRequestBody(String token) {
-        return String.format("grant_type=delete&client_id=%s&client_secret=%s&access_token=%s",
-                naverClientId, naverClientSecret, token);
+        return String.format(REQUEST_BODY, naverClientId, naverClientSecret, token);
     }
 
     private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setContentType(APPLICATION_FORM_URLENCODED);
         return headers;
     }
 
     @Override
     public Provider getProvider() {
-        return Provider.NAVER;
+        return NAVER;
     }
 }

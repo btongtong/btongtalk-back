@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+import static btongtong.btongtalkback.constant.Token.*;
+import static org.springframework.http.HttpHeaders.*;
+
 @Component
 @RequiredArgsConstructor
 public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -21,10 +24,14 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private String domainName;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
 
-        String refreshToken = (String) ((DefaultOAuth2User) authentication.getPrincipal()).getAttributes().get("refresh");
-        response.addCookie(jwtUtil.createCookie("Authorization", refreshToken, jwtUtil.refreshExpireSecond));
+        String refreshToken = (String) ((DefaultOAuth2User) authentication.getPrincipal())
+                .getAttributes()
+                .get(REFRESH.getType());
+        response.addCookie(jwtUtil.createCookie(AUTHORIZATION, refreshToken, REFRESH.getExpireTime()));
 
         response.sendRedirect(domainName + "/oauth");
     }

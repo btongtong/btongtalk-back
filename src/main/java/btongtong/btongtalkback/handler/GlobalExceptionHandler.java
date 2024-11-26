@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import static btongtong.btongtalkback.constant.ErrorCode.*;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
@@ -16,7 +18,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handle(Exception e) {
-        return createErrorResponseEntity(ErrorCode.INTERNAL_SERVER_ERROR);
+        return createErrorResponseEntity(INTERNAL_SERVER_ERROR);
     }
 
     private ResponseEntity<ErrorResponse> createErrorResponseEntity(ErrorCode errorCode) {

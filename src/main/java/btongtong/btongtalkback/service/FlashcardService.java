@@ -1,6 +1,5 @@
 package btongtong.btongtalkback.service;
 
-import btongtong.btongtalkback.constant.ErrorCode;
 import btongtong.btongtalkback.domain.Category;
 import btongtong.btongtalkback.domain.Flashcard;
 import btongtong.btongtalkback.dto.flashcard.response.*;
@@ -15,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static btongtong.btongtalkback.constant.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 public class FlashcardService {
@@ -24,7 +25,7 @@ public class FlashcardService {
     @Transactional
     public FlashcardsWithProgressAndCategoryDto getFlashcardsWithProgressAndCategory (Long categoryId, Long memberId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(CONTENT_NOT_FOUND));
         List<FlashcardWithProgressDto> flashcards = flashCardRepository.findFlashcardWithProgress(memberId, categoryId);
         return new FlashcardsWithProgressAndCategoryDto(category, flashcards);
     }
@@ -32,7 +33,7 @@ public class FlashcardService {
     @Transactional
     public FlashcardWithCategoryDto getFlashcard(Long flashcardId) {
         Flashcard flashcard = flashCardRepository.findById(flashcardId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(CONTENT_NOT_FOUND));
         return new FlashcardWithCategoryDto(flashcard);
     }
 
