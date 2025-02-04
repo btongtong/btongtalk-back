@@ -2,16 +2,16 @@
 
 <p align="center"><img width="300" alt="로고" src="https://github.com/user-attachments/assets/99960daa-8c87-4fc0-8e44-fbcc41223a4d"></p>
 
-> **면접 준비를 위한 플래시카드 프로그램** 
-<br> **개발 기간: 2024-07-23 ~ 2024-08-29**
+> **CS 공부를 위한 플래시카드 프로그램**
+<br> **개발 기간: 2024-07 ~ 2024-08**
 
 ## URL
-> **배포 URL: https://btongtalk.store** <br>
+> **배포 URL: https://bttcleanup.store/posts/-OI6lAF4I7N2vz_jd7p7** <br>
 > **프로젝트 구현 기록 URL: https://noon-chance-53f.notion.site/BTONGTALK-123cf60ac914819b83d3fba3be117ae3?pvs=4**
 
 ## 프로젝트 소개
 
-배통톡은 개발자를 위한 면접 준비 플랫폼으로, 네트워크, 알고리즘, 데이터베이스 등 다양한 카테고리의 면접 질문을 제공하고, 사용자가 실제 면접처럼 질문에 답변을 녹음하고 확인할 수 있도록 돕습니다. 또한, 사용자가 자신의 학습 상태를 관리하고 반복 학습할 수 있는 기능을 제공합니다.
+배통톡은 개발자를 위한 CS 공부 지원 플랫폼으로, 네트워크, 알고리즘, 데이터베이스 등 다양한 카테고리의 CS 질문을 제공하고, 사용자가 질문에 답변을 녹음하고 확인할 수 있도록 돕습니다. 또한, 사용자가 자신의 학습 상태를 관리하고 반복 학습할 수 있는 기능을 제공합니다.
 
 ## 개발 환경
 
@@ -30,238 +30,41 @@
 ### 버전 관리
 <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
 
-## 디렉토리 구조
-
-```
-📦 btongtalk-back
-├─ .github
-│  └─ workflows
-│     back-ci-cd.yml
-├─ Dockerfile
-└─ src
-   └─ main
-      ├─ resources
-      │  └─ application.properties
-      └─ java
-         └─ btongtong
-            └─ btongtalkback
-               ├─ BtongtalkbackApplication.java
-               ├─ config
-               │  ├─ SecurityConfig.java
-               │  └─ beanConfig.java
-               ├─ constant
-               │  ├─ ErrorCode.java
-               │  ├─ Provider.java
-               │  ├─ RecordStatus.java
-               │  └─ Role.java
-               ├─ controller
-               │  ├─ CategoryController.java
-               │  ├─ FlashcardController.java
-               │  ├─ MemberController.java
-               │  └─ RecordController.java
-               ├─ domain
-               │  ├─ Category.java
-               │  ├─ Flashcard.java
-               │  ├─ Member.java
-               │  └─ Record.java
-               ├─ dto
-               │  ├─ auth
-               │  │  ├─ AuthDto.java
-               │  │  ├─ OauthAttributes.java
-               │  │  └─ ReissueDto.java
-               │  ├─ category
-               │  │  └─ response
-               │  │     ├─ CategoryDto.java
-               │  │     └─ SubCategoryDto.java
-               │  ├─ error
-               │  │  └─ response
-               │  │     └─ ErrorResponse.java
-               │  ├─ flashcard
-               │  │  └─ response
-               │  │     ├─ FlashcardDto.java
-               │  │     ├─ FlashcardWithCategoryDto.java
-               │  │     ├─ FlashcardWithProgressDto.java
-               │  │     ├─ FlashcardsWithProgressAndCategoryDto.java
-               │  │     ├─ SearchFlashcardDto.java
-               │  │     └─ SearchFlashcardsWithTotalPagesDto.java
-               │  ├─ member
-               │  │  └─ response
-               │  │     └─ MemberDto.java
-               │  └─ record
-               │     ├─ request
-               │     │  ├─ CategoryIdAndProgressDto.java
-               │     │  └─ FlashcardIdAndStatusDto.java
-               │     └─ response
-               │        ├─ RecordDto.java
-               │        ├─ RecordStatisticsByFlashcardDto.java
-               │        ├─ RecordStatisticsDto.java
-               │        └─ RecordsByStatusWithTotalPages.java
-               ├─ filter
-               │  └─ JwtFilter.java
-               ├─ handler
-               │  ├─ CustomAccessDeniedHandler.java
-               │  ├─ CustomAuthenticationHandler.java
-               │  ├─ GlobalExceptionHandler.java
-               │  ├─ Oauth2FailureHandler.java
-               │  ├─ Oauth2SuccessHandler.java
-               │  └─ exception
-               │     └─ CustomException.java
-               ├─ repository
-               │  ├─ CategoryRepository.java
-               │  ├─ FlashCardRepository.java
-               │  ├─ MemberRepository.java
-               │  └─ RecordRepository.java
-               ├─ service
-               │  ├─ CategoryService.java
-               │  ├─ FlashcardService.java
-               │  ├─ MemberService.java
-               │  ├─ Oauth2UserService.java
-               │  └─ RecordService.java
-               └─ util
-                  ├─ FilterUtil.java
-                  ├─ JwtUtil.java
-                  └─ OauthUtil.java
-```
-
-```
-📦 btongtalk-front
-├─ .github
-│  └─ workflows
-│     back-ci-cd.yml
-├─ Dockerfile
-├─ nginx.conf
-├─ package-lock.json
-├─ package.json
-├─ public
-│  ├─ index.html
-│  ├─ logo.png
-│  └─ robots.txt
-└─ src
-   ├─ App.css
-   ├─ App.js
-   ├─ apis
-   │  ├─ api.js
-   │  └─ url.js
-   ├─ assets
-   │  ├─ default-profile-image.jpeg
-   │  ├─ kakao.png
-   │  ├─ logo.png
-   │  └─ naver.png
-   ├─ components
-   │  ├─ category
-   │  │  ├─ category.css
-   │  │  └─ category.jsx
-   │  ├─ flashcard
-   │  │  ├─ flashcard.css
-   │  │  └─ flashcard.jsx
-   │  ├─ flashcardBtn
-   │  │  ├─ flascardBtn.jsx
-   │  │  └─ flashcardBtn.css
-   │  ├─ flashcardStatistics
-   │  │  ├─ flashcardStatistics.css
-   │  │  └─ flashcardStatistics.jsx
-   │  ├─ footer
-   │  │  ├─ footer.css
-   │  │  └─ footer.jsx
-   │  ├─ header
-   │  │  ├─ header.css
-   │  │  └─ header.jsx
-   │  ├─ heading
-   │  │  ├─ heading.css
-   │  │  └─ heading.jsx
-   │  ├─ login
-   │  │  ├─ login.css
-   │  │  └─ login.jsx
-   │  ├─ logoutWithdraw
-   │  │  ├─ logoutWithdraw.css
-   │  │  └─ logoutWithdraw.jsx
-   │  ├─ navbar
-   │  │  ├─ navbar.css
-   │  │  └─ navbar.jsx
-   │  ├─ noCategory
-   │  │  ├─ noCategory.css
-   │  │  └─ noCategory.jsx
-   │  ├─ pagination
-   │  │  ├─ pagination.css
-   │  │  └─ pagination.jsx
-   │  ├─ profile
-   │  │  ├─ profile.css
-   │  │  └─ profile.jsx
-   │  ├─ profileImg
-   │  │  ├─ profileImg.css
-   │  │  └─ profileImg.jsx
-   │  ├─ statistics
-   │  │  ├─ statistics.css
-   │  │  └─ statistics.jsx
-   │  ├─ table
-   │  │  ├─ table.css
-   │  │  └─ table.jsx
-   │  └─ voiceRecord
-   │     ├─ voiceRecord.css
-   │     └─ voiceRecord.jsx
-   ├─ constant
-   │  ├─ chartConfig.js
-   │  ├─ chartStatus.js
-   │  ├─ flashcardStatus.js
-   │  ├─ recordStatus.js
-   │  └─ url.js
-   ├─ hooks
-   │  ├─ useFillColor.js
-   │  ├─ useFlashcard.js
-   │  ├─ useRecord.js
-   │  └─ useSetChart.js
-   ├─ index.js
-   ├─ layout
-   │  ├─ base
-   │  │  ├─ base.css
-   │  │  └─ base.jsx
-   │  └─ navbar
-   │     └─ navbar.jsx
-   ├─ reset.css
-   ├─ stores
-   │  ├─ useAuthStore.js
-   │  ├─ useCategoryStore.js
-   │  ├─ useFlashcardStore.js
-   │  ├─ useMemberStore.js
-   │  ├─ useRecordStore.js
-   │  ├─ useSearchFlashcardStore.js
-   │  ├─ useStatisticStore.js
-   │  └─ useSubCategoryStore.js
-   └─ views
-      ├─ flashcard
-      │  ├─ flashcard.css
-      │  └─ flashcard.jsx
-      ├─ login
-      │  ├─ login.css
-      │  └─ login.jsx
-      ├─ main
-      │  ├─ main.css
-      │  └─ main.jsx
-      ├─ member
-      │  └─ member.jsx
-      ├─ record
-      │  ├─ record.jsx
-      │  └─ records.css
-      ├─ searchFlashcard
-      │  ├─ searchFlashcard.css
-      │  └─ searchFlashcard.jsx
-      └─ subcategory
-         ├─ subcategory.css
-         └─ subcategory.jsx
-```
-
 ## 주요 기능
 ### Oauth 로그인
 - 카카오와 네이버 계정으로 간편하게 로그인할 수 있습니다.
 
-### 질문 플래시카드
+### 플래시카드
 - 카테고리별 질문을 플래시카드 형식으로 제공하며, 각 질문에 대한 답변을 녹음하고 재생할 수 있습니다.
 
 ### 문제 풀이 분포
-- 지금까지 풀어본 문제의 카테고리별 정답 분포를 그래프로 시각화해 제공합니다.
+- 지금까지 푼 문제의 카테고리별 정답 분포를 그래프로 시각화해 제공합니다.
 
 ### 맞은 문제와 틀린 문제 관리
 - 맞은 문제와 틀린 문제를 한눈에 확인하고, 틀린 문제를 다시 풀어볼 수 있는 기능을 제공합니다.
+
+## ERD
+<img src="https://github.com/user-attachments/assets/535d5acf-d3d6-446f-9a8e-34443c5be924">
+
+## 유저 플로우
+<table>
+    <tr>
+        <th style="text-align:center">로그인 & 회원가입</th>
+        <th style="text-align:center">플래시카드</th>
+    </tr>
+    <tr>
+        <td><img width="1470" alt="로그인 & 회원가입" src="https://github.com/user-attachments/assets/b534bc95-f1a3-4e35-84ec-a1aaa364ddc8"></td>
+        <td><img width="1470" alt="플래시카드" src="https://github.com/user-attachments/assets/3bf80334-54df-49d7-ab89-e022fe732ec2"></td>
+    </tr>
+    <tr>
+        <th style="text-align:center">문제 검색</th>
+        <th style="text-align:center">마이페이지</th>
+    </tr>
+    <tr>
+        <td><img width="1470" alt="문제 검색" src="https://github.com/user-attachments/assets/dc43c55c-ee48-4320-b21b-97c1b5572947"></td>
+        <td><img width="1470" alt="마이페이지" src="https://github.com/user-attachments/assets/b22f1fa2-0894-4c9b-8f65-ddb590a343ca"></td>
+    </tr>
+</table>
 
 ## 화면 구성
 <table>
