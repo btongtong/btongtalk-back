@@ -6,7 +6,7 @@
 <br> **개발 기간: 2024-07 ~ 2024-08**
 
 ## URL
-> **배포 URL: https://bttcleanup.store/posts/-OI6lAF4I7N2vz_jd7p7** <br>
+> **배포 URL: https://btongtalk.store** <br>
 > **프로젝트 구현 기록 URL: https://noon-chance-53f.notion.site/BTONGTALK-123cf60ac914819b83d3fba3be117ae3?pvs=4**
 
 ## 프로젝트 소개
