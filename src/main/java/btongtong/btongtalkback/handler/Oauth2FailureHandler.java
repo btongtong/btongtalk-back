@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -17,6 +18,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class Oauth2FailureHandler implements AuthenticationFailureHandler {
     private final FilterUtil filterUtil;
+    @Value("${domain.name}")
+    private String domainName;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request,
@@ -24,6 +27,7 @@ public class Oauth2FailureHandler implements AuthenticationFailureHandler {
                                         AuthenticationException exception) throws IOException, ServletException {
         if(exception instanceof OAuth2AuthenticationException oAuth2AuthenticationException) {
             handleOAuth2AuthenticationFailure(response, oAuth2AuthenticationException);
+            response.sendRedirect(domainName + "/login");
         }
     }
 
