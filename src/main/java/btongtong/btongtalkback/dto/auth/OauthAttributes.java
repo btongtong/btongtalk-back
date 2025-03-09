@@ -14,7 +14,6 @@ import static btongtong.btongtalkback.constant.Provider.*;
 @Builder
 public class OauthAttributes {
     private Map<String, Object> attributes;
-    private String oauthKey;
     private String provider;
     private String profileImg;
     private String email;
@@ -37,7 +36,6 @@ public class OauthAttributes {
 
         return OauthAttributes.builder()
                 .attributes(new HashMap<>(attributes))  // map 수정 가능하도록 새로 만들기 (원래는 unmodifiableMap 형태)
-                .oauthKey((String) response.get(NAVER.getId()))
                 .provider(provider)
                 .profileImg((String) response.get(NAVER.getProfileImage()))
                 .email((String) response.get(NAVER.getEmail()))
@@ -52,7 +50,6 @@ public class OauthAttributes {
 
         return OauthAttributes.builder()
                 .attributes(new HashMap<>(attributes))
-                .oauthKey(attributes.get(KAKAO.getId()).toString())
                 .provider(provider)
                 .email((String) kakaoAccount.get(KAKAO.getEmail()))
                 .profileImg((String) profile.get(KAKAO.getProfileImage()))
@@ -67,7 +64,6 @@ public class OauthAttributes {
                 .email(email)
                 .name(name)
                 .role(role)
-                .oauthKey(oauthKey)
                 .provider(provider)
                 .build();
     }

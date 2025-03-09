@@ -23,7 +23,6 @@ public class Member {
     private String email;
     private String name;
     private String profileImg;
-    private String oauthKey;
     private String provider;
 
     @Enumerated(EnumType.STRING)
@@ -45,11 +44,10 @@ public class Member {
 
     // 생성자
     @Builder
-    public Member(String email, String name, String profileImg, String oauthKey, String provider, Role role, String oauthAccessToken, String refreshToken) {
+    public Member(String email, String name, String profileImg, String provider, Role role, String oauthAccessToken, String refreshToken) {
         this.email = email;
         this.name = name;
         this.profileImg = profileImg;
-        this.oauthKey = oauthKey;
         this.provider = provider;
         this.role = role;
         this.oauthAccessToken = oauthAccessToken;
